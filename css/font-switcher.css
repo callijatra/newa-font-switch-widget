@@ -1,0 +1,147 @@
+/* Font Switcher Widget Styles */
+
+/* Nithya Ranjana font definitions */
+@font-face {
+  font-family: 'NithyaRanjana';
+  src:  url('https://cdn.staticdelivr.com/gh/callijatra/nithya-ranjana-webfont1/main/fonts/NithyaRanjanaDU-Regular.otf') format('otf'),
+        url('https://cdn.staticdelivr.com/gh/callijatra/nithya-ranjana-webfont1/main/fonts/NithyaRanjanaDU-Regular.woff2') format('woff2'),
+        url('https://cdn.staticdelivr.com/gh/callijatra/nithya-ranjana-webfont1/main/fonts/NithyaRanjanaDU-Regular.woff') format('woff');
+  font-weight: 100;
+  font-display: swap;
+}
+
+/* Widget container - base styles */
+.font-switcher-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Fixed positioning (default - top-right corner) */
+.font-switcher-fixed {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Inline placement (when inserted into a custom container) */
+.font-switcher-inline {
+  position: relative;
+  display: inline-flex;
+  box-shadow: none;
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+}
+
+/* Widget label */
+.font-switcher-label {
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Widget select dropdown */
+.font-switcher-select {
+  padding: 6px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #333;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 140px;
+}
+
+.font-switcher-select:hover {
+  border-color: #999;
+}
+
+.font-switcher-select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.font-switcher-select:active {
+  border-color: #4a90e2;
+}
+
+/* Font utility classes (for manual application if needed) */
+.font-switcher-ranjana {
+  font-family: 'NithyaRanjana', sans-serif !important;
+}
+
+.font-switcher-newa {
+  font-family: 'Noto Sans Newa', sans-serif !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .font-switcher-fixed {
+    top: 10px;
+    right: 10px;
+  }
+
+  .font-switcher-container {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .font-switcher-select {
+    min-width: 120px;
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .font-switcher-container {
+    border-width: 2px;
+    border-color: #000;
+  }
+
+  .font-switcher-select {
+    border-width: 2px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .font-switcher-container {
+    background: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+  }
+
+  .font-switcher-label {
+    color: #e0e0e0;
+  }
+
+  .font-switcher-select {
+    background: #2d2d2d;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .font-switcher-select:hover {
+    border-color: #777;
+  }
+
+  .font-switcher-select:focus {
+    border-color: #5a9de2;
+    box-shadow: 0 0 0 3px rgba(90, 157, 226, 0.2);
+  }
+}
+

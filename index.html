@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Font Switcher Widget - Example</title>
+  
+  <!-- Include the font switcher CSS -->
+  <link rel="stylesheet" href="css/font-switcher.css">
+  
+  <style>
+    /* Your existing page styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      line-height: 1.6;
+      color: #333;
+      background: #fff;
+    }
+    
+    /* Navigation bar example */
+    .nav-bar {
+      background: #2c3e50;
+      color: white;
+      padding: 1em 2em;
+      margin: -40px -20px 2em -20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .nav-bar h2 {
+      margin: 0;
+      color: white;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5em;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-top: 2em;
+    }
+    
+    .content {
+      background: #f8f9fa;
+      padding: 2em;
+      border-radius: 8px;
+      margin: 2em 0;
+      font-size: 1em;
+    }
+    
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1em;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Example: Navigation bar with font switcher -->
+  <nav class="nav-bar" id="main-nav">
+    <h2>CALLIJATRA</h2>
+    <ul class="nav-links">
+      <li><a href="#" style="color: white;">Home</a></li>
+      <li><a href="#" style="color: white;">About</a></li>
+      <li><a href="#" style="color: white;">Contact</a></li>
+      <!-- Font switcher will be inserted here -->
+    </ul>
+  </nav>
+
+  <header>
+    <h1>Font Switcher Widget Example</h1>
+    <p>This page demonstrates how to use the Font Switcher Widget. The widget is placed in the navigation bar above or anywhere in the page specifying <em>id</em>, but you can also use the default fixed top-right position as a floating widget.</p>
+    <div id="header-content"></div>
+</header>
+
+  <div class="content newa-content">
+    <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
+    <p>येँ (नेपालभाषा टाइम्स)- विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट म्हिगः छगू ज्याझ्वःया दथुइ येँ महानगरपालिकाया उपमेयर सुनिता डंगोलं सार्वजनिक यानादीगु खः ।</p>
+    <p>ज्याझ्वलय् नेवाः न्ह्यलुवा मल्ल के. सुन्दर, क्यालिजात्रा फाउन्डेसनया प्रमुख लिसें लिपि विशेषज्ञ आनन्दकुमार महर्जन, नेपालभाषा केन्द्रीय विभागया प्रमुख सह–प्रा.डा. राजनलाल जोशी, नेपाल लिपि गुथिया नायः अनिल स्थापित आदिपिं पाहाँ कथं उपस्थिति दुगु खः ।</p>
+    <p>थौंया आधुनिक युगय् लिपिया संरक्षण व प्रवर्धन यायेत डिजिटल मार्केटय् वनेमाःगु खँयात महसुस यासें क्यालिजात्रा फाउण्डेसन व भारतया नांजाःगु फन्ट डिजाइन कम्पनी ‘एक टाइप’ जानाः ‘नित्या रञ्जना’ नामं थ्व फन्ट विकास याःगु खः । थ्व विकास यायेगु लागिं नेपाःपाखें लिपि विशेषज्ञ आनन्दकुमार महर्जनया सल्लाह कथं तथागत विश्वास, सारंग कुलकर्णी व नूपुर दात्यें ज्या यानादीगु खः ।</p>
+    <p>रञ्जना लिपिया थ्व फन्ट अनलाइन, पत्रपत्रिका, सफू आदि न्ह्यागु ज्याय् नं छ्यले फइगु खँ धाःगु दु । थुकियात अनलाइनपाखें डाउनलोड यानाः काये फइ । थ्व फन्ट विश्वन्यंकं निःशुल्क उपलब्ध जुइ । नेपालय् आः तक उपलब्ध मेमेगु रञ्जना लिपिया फन्ट स्वयां थ्व फन्ट सुन्दर जक मखु अःपुक च्वये फइगु व छुं गल्ती नं पिहां मवइगु कथं विकास यानातःगु खँ धाःगु दु ।</p>
+    <p>फन्टया सार्वजनिक ज्याझ्वः लिपा लिपियात कयाः सहलह ज्याझ्वः नं जूगु खः । उगु ज्याझ्वलय् न्ववासें मनपाया उपमेयर सुनिता डंगोलं आखः दयेकेमाःगु महत्वपूर्ण खँ खः, आः आखः दयेकेधुंकूगु जुयाः थ्वयात न्ह्याथासं अःपुक छ्यले फइ धयादिल । वय्कलं धयादिल, ‘झीके थुलि अःपुक लिपि आखः उपलब्ध जुइधुंकल, आः रञ्जना लिपि छ्यलेत सुं नं ग्यायेमाःगु मन्त । आः सुनां नं गल्ती जुइक लिपि छ्यले माली मखुत ।’</p>
+    <p>ज्याझ्वलय् उगु फन्ट छ्यलाः च्वयातःगु थीथी धापू, वर्णमाला, डिजाइन आदि नं ब्वयातःगु खः । सार्वजनिकरण ज्याझ्वलय् आपालं लिपि व भाषा विशेषज्ञ, क्यालिग्राफर, टाइपोग्राफर, डिजाइन प्रोफेसर, फन्ट डिजाइनर, आइटी विज्ञतय्गु नं उपस्थिति दुगु खः ।</p>
+</div>
+
+  <div class="content">
+    <h2>How to Use</h2>
+    <p>To add the Font Switcher Widget to your page, include these files and initialize the widget:</p>
+    
+    <div class="code-block">
+&lt;!-- Include CSS --&gt;
+&lt;link rel="stylesheet" href="font-switcher.css"&gt;
+
+&lt;!-- Include JavaScript --&gt;
+&lt;script src="font-switcher.js"&gt;&lt;/script&gt;
+
+&lt;!-- Initialize Widget --&gt;
+&lt;script&gt;
+  FontSwitcher.init({
+    targetSelector: 'body'  // Apply to entire page
+  });
+&lt;/script&gt;
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Configuration Options</h2>
+    <ul>
+      <li><strong>targetSelector</strong>: CSS selector for elements to apply fonts (default: 'body')</li>
+      <li><strong>targetClasses</strong>: Array of class names to apply fonts to (e.g., ['content', 'article']) - takes precedence over targetSelector</li>
+      <li><strong>container</strong>: CSS selector or DOM element to insert widget into (null = fixed top-right)</li>
+      <li><strong>backgroundColor</strong>: Custom background color (e.g., '#2c3e50', 'transparent', 'rgba(0,0,0,0.1)')</li>
+      <li><strong>position</strong>: Widget position (default: 'fixed')</li>
+      <li><strong>autoLoad</strong>: Auto-load Google Fonts (default: true)</li>
+    </ul>
+    
+    <h3>Example 1: Place widget in navigation bar with custom background</h3>
+    <div class="code-block">
+&lt;!-- HTML --&gt;
+&lt;nav id="main-nav"&gt;
+  &lt;ul class="nav-links"&gt;
+    &lt;!-- Your navigation items --&gt;
+    &lt;!-- Font switcher will be inserted here --&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script&gt;
+  FontSwitcher.init({
+    container: '.nav-links',  // Insert widget into navigation links list
+    backgroundColor: '#2c3e50',  // Match navigation background (text auto-adjusts to white)
+    targetClasses: ['content']
+  });
+&lt;/script&gt;
+    </div>
+
+    <h3>Example 2: Using targetClasses</h3>
+    <div class="code-block">
+&lt;script&gt;
+  // Apply fonts only to elements with class 'content'
+  FontSwitcher.init({
+    targetClasses: ['content']
+  });
+  
+  // Or apply to multiple classes
+  FontSwitcher.init({
+    targetClasses: ['content', 'article', 'main-text']
+  });
+&lt;/script&gt;
+    </div>
+
+    <h3>Example 3: Default fixed position (top-right)</h3>
+    <div class="code-block">
+&lt;script&gt;
+  // No container specified = fixed top-right corner
+  FontSwitcher.init({
+    targetClasses: ['content']
+  });
+&lt;/script&gt;
+    </div>
+
+    <h3>Example 4: Custom background colors</h3>
+    <div class="code-block">
+&lt;script&gt;
+  // Dark background (text auto-adjusts to white)
+  FontSwitcher.init({
+    backgroundColor: '#2c3e50',
+    targetClasses: ['content']
+  });
+  
+  // Transparent background
+  FontSwitcher.init({
+    backgroundColor: 'transparent',
+    targetClasses: ['content']
+  });
+  
+  // Semi-transparent overlay
+  FontSwitcher.init({
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    targetClasses: ['content']
+  });
+&lt;/script&gt;
+    </div>
+  </div>
+
+  <div class="content">
+    <h2 class = "newa-content">न्हूम्ह कुमारी आर्यतारा शाक्य</h2>
+    <p class = "newa-content">येँ (नेपालभाषा टाइम्स) - येँया न्हूम्ह लाय्कू कुमारी कथं मय्जु आर्यतारा शाक्ययात ल्यःगु दु । कुमारी ल्ययेगु परम्परागत पद्धति कथं वय्कःयात न्हूम्ह कुमारी कथं ल्ययेगु ज्या जूगु खः । वय्कः येँया इतुम्बहाः अर्थात भाष्करदेव संस्कारित केशचन्द्रकृत पारावर्त महाविहारया शाक्य कुलपुत्री खः । वय्कःया उमेर थौंकन्हय् निदँत्या स्वयां भचा अप्वः थ्यनाच्वंगु दु ।</p>
+    <p class = "newa-content">वय्कः उगु विहारया भाजु अनन्त शाक्य व मय्जु प्रतिष्ठा शाक्यया म्ह्याय्मय्जु खः । वय्कःया बाज्या अमृतरत्न शाक्य खःसा अजि शिलु शाक्य खः । वय्कःया बाज्या अमृतरत्न शाक्य नेपालभाषाया नांजाःम्ह म्ये च्वमि खः ।</p>
+    <p class = "newa-content">आः थ्वहे वइगु अष्टमि मंगलवाः कुन्हु न्हिनसिया १२ः०५ निसें १२ः१६ बजे तकया साइत दुने वय्कःयात कुमारी छेँय् छगू विशेष अनुष्ठान यासें न्हूम्ह कुमारीया आसनय् बिराजमान याकीगु ग्वसाः दु । नवमि कुन्हु हनुमानध्वाखाया तलेजुइ यंकाः विशेष पुजा जुइ । दशमि कुन्हु वसपोलं मोहनिया सिन्हः तिकाबिज्याइ ।</p>
+    <p class = "newa-content">थुगुसी न्हूम्ह कुमारी ल्ययेगु ज्याया भाला शाक्य महाविहार संघपाखें याःगु खः । न्हूम्ह कुमारी ल्ययेया लागिं संघं कुमारी जुइ जुइपिं येँया झिंखुगू बहालय् पौ छ्वयाः नां मुंकेगु ज्या याःगु खः ।</p>
+    <p class = "newa-content">संघया महासचिव संघरत्न शाक्यं ‘नेपालभाषा टाइम्स’ यात कनादीकथं कुमारी जुइगु लागिं आपालं निवेदन वःगु खःसां संघं दयेकातःगु मापदण्ड दुने लाःपिं स्वम्हेसित जक अन्तिम छनौटय् दुथ्याकूगु खः । थ्व स्वम्ह मध्ये आर्यतारायात न्हूम्ह कुमारी ल्ययेगु ज्या जूगु खः । थुकी गुथि संस्थान, पञ्चाङ निर्णायक समितिं नं भूमिका म्हितूगु खःसा आः छनौट जूम्ह शाक्यपुत्रीयात राष्ट्रप्रमुखयाथाय् नं यंकाः नापलाकीगु ग्वसाः दु ।</p>
+    <p class = "newa-content">अष्टमि कुन्हु न्हूम्ह कुमारीयात आसनय् तयेगु ज्याया नापनापं निवृत्त जुइम्ह कुमारी माजुयात आसनं क्वकयाः बाजागाजा सहित छेँय् तः वनेगु ज्या नं जुइ । थौंकन्हय् मय्जु तृष्णा शाक्य कुमारीया आसनय् दी । वसपोलया छेँ ओमबहालय् खःसां कुमारी छेँनं विदाइ यानाः नःघःया पाजुपिनि छेँय् यंकेगु तयारी जुयाच्वंगु खँ धाःगु दु । निवृत्त जुइम्ह कुमारीयात कुमारी छेँया दबूपाखे स्वःगु चिद्वाःगु लुखां पित यंकीगु चलन दु । वसपोल वंगु च्यादँ न्ह्यः कुमारीया आसनय् विराजमान जुयाबिज्याःगु खः ।</p>
+    <p>This is regular paragraph text. When you switch fonts using the widget, widgets with class specified in the <code>FontSwitcher.init()</code> will change according to your selection.</p>
+    <p>The font selection is saved to your browser's localStorage, so your preference will persist across page reloads.</p>
+  </div>
+
+  <!-- Include the font switcher JavaScript -->
+  <script src="js/font-switcher.js"></script>
+  
+  <!-- Initialize the widget -->
+  <script>
+    // Example: Place widget in navigation bar with matching background
+    // Insert into the nav-links ul so it appears with other nav items
+    FontSwitcher.init({
+      container: '#main-nav',  // Insert into navigation links list
+      backgroundColor: '#2c3e50',  // Match navigation background (auto-adjusts text to white)
+      targetClasses: ['newa-content']  // Apply fonts to elements with 'content' class
+    });
+    
+    // Alternative: Default fixed position (top-right corner)
+    // FontSwitcher.init({
+    //   targetClasses: ['content']
+    // });
+  </script>
+</body>
+</html>
+
