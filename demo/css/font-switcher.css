@@ -9,6 +9,15 @@
   font-weight: 100;
   font-display: swap;
 }
+/* Nepa Aakha font */
+@font-face {
+  font-family: 'NewaAakha';
+  src:  url('https://cdn.staticdelivr.com/gh/dibeshpradhan/newa-font-switch-widget/main/demo/font/NEPAL%20AAKHA.otf') format('otf'),
+        url('https://cdn.staticdelivr.com/gh/dibeshpradhan/newa-font-switch-widget/main/demo/font/NEPAL%20AAKHA.woff') format('woff'),
+        url('https://cdn.staticdelivr.com/gh/dibeshpradhan/newa-font-switch-widget/main/demo/font/NEPAL%20AAKHA.woff2') format('woff2');
+  font-weight: 100;
+  font-display: swap;
+}
 @font-face{
 font-family: 'Noto Sans Newa';
 url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap');
