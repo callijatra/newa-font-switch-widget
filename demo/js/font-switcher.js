@@ -18,8 +18,8 @@
     },
 
     fonts: {
-      original: {
-        name: 'Original',
+      devanavari: {
+        name: 'Devanavari',
         family: null
       },
       ranjana: {
@@ -27,12 +27,12 @@
         family: 'NithyaRanjana, sans-serif'
       },
       newa: {
-        name: 'Noto Sans Newa',
-        family: '"Noto Sans Newa", sans-serif'
+        name: 'Newa Aakha',
+        family: '"NewaAkha", sans-serif'
       }
     },
 
-    currentFont: 'original',
+    currentFont: 'devanavari',
     widgetElement: null,
     googleFontsLoaded: false,
 
@@ -227,7 +227,7 @@
 
     /**
      * Switch to a different font
-     * @param {string} fontKey - Font key ('original', 'ranjana', or 'newa')
+     * @param {string} fontKey - Font key ('devanavari', 'ranjana', or 'newa')
      */
     switchFont: function(fontKey) {
       if (!this.fonts[fontKey]) {
@@ -303,7 +303,7 @@
         }
 
         // Handle font family
-        if (fontKey === 'original') {
+        if (fontKey === 'devanavari') {
           // Remove font-family to restore original
           el.style.fontFamily = '';
           el.classList.remove('font-switcher-ranjana', 'font-switcher-newa');
