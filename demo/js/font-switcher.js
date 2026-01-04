@@ -28,7 +28,7 @@
       },
       newa: {
         name: 'Newa Aakha',
-        family: '"NewaAkha", sans-serif'
+        family: '"NewaAakha", sans-serif'
       }
     },
 
