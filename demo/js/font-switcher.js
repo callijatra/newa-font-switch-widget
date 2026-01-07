@@ -27,7 +27,7 @@
         family: 'NithyaRanjana, sans-serif'
       },
       newa: {
-        name: 'Newa Aakha',
+        name: 'Nepal Lipi "Aakha"',
         family: '"NewaAakha", sans-serif'
       }
     },
