@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keyboard - Callijatra</title>
+  <link rel="stylesheet" href="css/font-switcher.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+      color: #333;
+      background: #f5f7fa;
+    }
+    .nav-bar {
+      background: #2c3e50;
+      color: white;
+      padding: 1em 2em;
+      margin: 0 -20px 2em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-bar h2 { margin: 0; color: white; }
+    .nav-links { display: flex; gap: 1.5em; list-style: none; }
+    .nav-links a { color: white; text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { text-decoration: underline; }
+
+    .page-title {
+      text-align: center;
+      margin: 1.5em 0 0.5em;
+      color: #2c3e50;
+      font-size: 1.6em;
+    }
+    .page-subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 2em;
+      font-size: 0.95em;
+    }
+
+    /* Script toggle */
+    .script-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 1.5em;
+    }
+    .script-toggle button {
+      padding: 10px 24px;
+      border: 2px solid #2c3e50;
+      background: white;
+      color: #2c3e50;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .script-toggle button:first-child { border-radius: 6px 0 0 6px; }
+    .script-toggle button:last-child { border-radius: 0 6px 6px 0; }
+    .script-toggle button:not(:first-child) { border-left: none; }
+    .script-toggle button.active {
+      background: #2c3e50;
+      color: white;
+    }
+
+    /* Text areas */
+    .editor-area {
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      overflow: visible;
+      margin-bottom: 1.5em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .editor-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #eee;
+      border-radius: 8px 8px 0 0;
+    }
+    .editor-toolbar .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+    }
+    .editor-toolbar .actions { display: flex; gap: 8px; }
+    .btn-sm {
+      padding: 4px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      color: #333;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm:hover { background: #f0f0f0; }
+
+    #devanagari-output {
+      width: 100%;
+      min-height: 180px;
+      padding: 16px;
+      border: none;
+      outline: none;
+      font-size: 20px;
+      line-height: 1.8;
+      resize: vertical;
+      font-family: inherit;
+      border-radius: 0 0 8px 8px;
+    }
+    #devanagari-output.newa-script {
+      font-family: 'Noto Sans Newa', sans-serif;
+    }
+
+    /* Suggestion bar - horizontal, below textarea */
+    .suggestion-bar {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -44px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 1000;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      padding: 0;
+      height: 42px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .suggestion-bar .suggestion-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 16px;
+      height: 42px;
+      cursor: pointer;
+      font-size: 18px;
+      border-right: 1px solid #f0f0f0;
+      transition: background 0.1s;
+      gap: 4px;
+      vertical-align: top;
+    }
+    .suggestion-bar.newa-mode { height: 54px; bottom: -56px; }
+    .suggestion-bar.newa-mode .suggestion-item { height: 54px; }
+    .suggestion-text-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.2;
+    }
+    .suggestion-text-group .main-text { font-size: 18px; }
+    .suggestion-text-group .suggestion-deva-below {
+      font-size: 11px;
+      color: #999;
+    }
+    .suggestion-bar .suggestion-item:last-child { border-right: none; }
+    .suggestion-bar .suggestion-item:hover,
+    .suggestion-bar .suggestion-item.selected {
+      background: #e8f0fe;
+    }
+    .suggestion-item .main-text {
+      font-weight: 500;
+    }
+    .suggestion-item .hint {
+      font-size: 11px;
+      color: #999;
+    }
+    .suggestion-item .index-hint {
+      font-size: 10px;
+      color: #bbb;
+      margin-right: 2px;
+      min-width: 14px;
+      text-align: center;
+    }
+
+    /* Keyboard */
+    .keyboard-section {
+      margin-bottom: 1.5em;
+    }
+    .keyboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .keyboard-header h3 {
+      font-size: 14px;
+      color: #555;
+      font-weight: 600;
+    }
+    .keyboard-toggle {
+      padding: 6px 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .keyboard-toggle:hover { background: #f0f0f0; }
+
+    .keyboard-container {
+      background: #e8eaed;
+      border-radius: 8px;
+      padding: 12px;
+      user-select: none;
+    }
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .keyboard-row:last-child { margin-bottom: 0; }
+
+    .key {
+      min-width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 6px;
+      background: white;
+      color: #333;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      transition: all 0.1s;
+      padding: 2px 6px;
+    }
+    .key:hover { background: #f0f4ff; }
+    .key:active { background: #d0d8e8; transform: translateY(1px); }
+    .key .sub { font-size: 9px; color: #999; margin-top: 1px; }
+    .key .deva-sub { font-size: 9px; color: #b0b0b0; margin-top: 0; }
+    .key.wide { min-width: 70px; font-size: 12px; }
+    .key.space { flex: 1; max-width: 300px; font-size: 12px; color: #888; }
+    .key.backspace { min-width: 70px; font-size: 12px; }
+    .key.newa-key span:first-child {
+      font-family: 'Noto Sans Newa', sans-serif;
+    }
+    .keyboard-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* How to use section */
+    .help-section {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 1.5em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .help-section h3 {
+      color: #2c3e50;
+      margin-bottom: 12px;
+      font-size: 1.1em;
+    }
+    .help-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .help-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-bottom: 2px solid #ddd;
+      color: #555;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .help-table td {
+      padding: 6px 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .help-table td:nth-child(2) { font-size: 18px; }
+    .help-table tr:hover { background: #f8f9fa; }
+
+    .help-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* Extra bottom margin for editor when suggestion bar is visible */
+    .editor-area.has-suggestions {
+      margin-bottom: calc(1.5em + 54px);
+    }
+
+    @media (max-width: 600px) {
+      .keyboard-container { padding: 6px; }
+      .key { min-width: 30px; height: 38px; font-size: 14px; }
+      .key .sub { font-size: 7px; }
+      .key .deva-sub { font-size: 7px; }
+      .key.wide { min-width: 50px; }
+      #devanagari-output { font-size: 18px; min-height: 140px; }
+      .page-title { font-size: 1.2em; }
+      .suggestion-bar .suggestion-item { padding: 0 12px; font-size: 16px; }
+      .suggestion-bar.newa-mode .suggestion-item { font-size: 14px; }
+      .suggestion-text-group .main-text { font-size: 14px; }
+      .keyboard-header { flex-wrap: wrap; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar">
+    <h2>CALLIJATRA</h2>
+    <ul class="nav-links">
+      <li><a href="index.html">Font Switcher</a></li>
+      <li><a href="transliterate.html">Keyboard</a></li>
+    </ul>
+  </nav>
+
+  <h1 class="page-title">Keyboard</h1>
+  <p class="page-subtitle">Type in English to get Devanagari. Press Space or Enter to confirm. Convert to Nepal Lipi (Newa) anytime.</p>
+
+  <!-- Script toggle - Nepal Lipi first -->
+  <div class="script-toggle">
+    <button id="btn-newa">Nepal Lipi (Newa)</button>
+    <button id="btn-devanagari" class="active">Devanagari</button>
+  </div>
+
+  <!-- Editor area -->
+  <div class="editor-area" id="editor-area">
+    <div class="editor-toolbar">
+      <span class="label" id="script-label">Devanagari</span>
+      <div class="actions">
+        <button class="btn-sm" id="btn-copy" title="Copy to clipboard">Copy</button>
+        <button class="btn-sm" id="btn-clear" title="Clear text">Clear</button>
+      </div>
+    </div>
+    <textarea id="devanagari-output" placeholder="Type here in English... e.g. namaste, nepal, kathmandu"></textarea>
+    <div class="suggestion-bar" id="suggestion-bar"></div>
+  </div>
+
+  <!-- Keyboard -->
+  <div class="keyboard-section">
+    <div class="keyboard-header">
+      <h3 id="keyboard-title">Devanagari Keyboard</h3>
+      <div class="keyboard-controls">
+        <button class="keyboard-toggle" id="layout-toggle">बकमान</button>
+        <button class="keyboard-toggle" id="keyboard-toggle">Hide Keyboard</button>
+      </div>
+    </div>
+    <div class="keyboard-container" id="keyboard-container"></div>
+  </div>
+
+  <!-- How to use (generated dynamically) -->
+  <div class="help-section" id="help-section"></div>
+
+  <!-- How to embed -->
+  <div class="help-section">
+    <h3>Embed in Your Website</h3>
+    <div style="background:#2d2d2d; color:#f8f8f2; padding:1em; border-radius:4px; font-family:'Courier New',monospace; font-size:0.85em; overflow-x:auto; white-space:pre;">&lt;!-- Include the transliteration script --&gt;
+&lt;script src="js/transliterate.js"&gt;&lt;/script&gt;
+
+&lt;!-- Create a textarea --&gt;
+&lt;textarea id="my-input"&gt;&lt;/textarea&gt;
+
+&lt;!-- Initialize --&gt;
+&lt;script&gt;
+  NepalTransliterate.attach('my-input');
+&lt;/script&gt;</div>
+  </div>
+
+<script src="js/ne-dictionary.js"></script>
+<script src="js/new-dictionary.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // Devanagari to Newa Unicode Converter
+  // ============================================================
+  var fp = String.fromCodePoint;
+  var multiCharMap = {};
+  multiCharMap["\u0919\u094D\u0939"] = fp(0x11413);
+  multiCharMap["\u091E\u094D\u0939"] = fp(0x11419);
+  multiCharMap["\u0930\u094D\u0939"] = fp(0x1142D);
+
+  var newaMap = {};
+  newaMap["\u0905"]=fp(0x11400); newaMap["\u0906"]=fp(0x11401); newaMap["\u0907"]=fp(0x11402);
+  newaMap["\u0908"]=fp(0x11403); newaMap["\u0909"]=fp(0x11404); newaMap["\u090A"]=fp(0x11405);
+  newaMap["\u090B"]=fp(0x11406); newaMap["\u090C"]=fp(0x11408); newaMap["\u090F"]=fp(0x1140A);
+  newaMap["\u0910"]=fp(0x1140B); newaMap["\u0913"]=fp(0x1140C); newaMap["\u0914"]=fp(0x1140D);
+  newaMap["\u0915"]=fp(0x1140E); newaMap["\u0916"]=fp(0x1140F); newaMap["\u0917"]=fp(0x11410);
+  newaMap["\u0918"]=fp(0x11411); newaMap["\u0919"]=fp(0x11412); newaMap["\u091A"]=fp(0x11414);
+  newaMap["\u091B"]=fp(0x11415); newaMap["\u091C"]=fp(0x11416); newaMap["\u091D"]=fp(0x11417);
+  newaMap["\u091E"]=fp(0x11418); newaMap["\u091F"]=fp(0x1141A); newaMap["\u0920"]=fp(0x1141B);
+  newaMap["\u0921"]=fp(0x1141C); newaMap["\u0922"]=fp(0x1141D); newaMap["\u0923"]=fp(0x1141E);
+  newaMap["\u0924"]=fp(0x1141F); newaMap["\u0925"]=fp(0x11420); newaMap["\u0926"]=fp(0x11421);
+  newaMap["\u0927"]=fp(0x11422); newaMap["\u0928"]=fp(0x11423); newaMap["\u092A"]=fp(0x11425);
+  newaMap["\u092B"]=fp(0x11426); newaMap["\u092C"]=fp(0x11427); newaMap["\u092D"]=fp(0x11428);
+  newaMap["\u092E"]=fp(0x11429); newaMap["\u092F"]=fp(0x1142B); newaMap["\u0930"]=fp(0x1142C);
+  newaMap["\u0932"]=fp(0x1142E); newaMap["\u0935"]=fp(0x11430); newaMap["\u0936"]=fp(0x11431);
+  newaMap["\u0937"]=fp(0x11432); newaMap["\u0938"]=fp(0x11433); newaMap["\u0939"]=fp(0x11434);
+  newaMap["\u0933"]=fp(0x1142F); // ळ
+  newaMap["\u093E"]=fp(0x11435); newaMap["\u093F"]=fp(0x11436); newaMap["\u0940"]=fp(0x11437);
+  newaMap["\u0941"]=fp(0x11438); newaMap["\u0942"]=fp(0x11439); newaMap["\u0943"]=fp(0x1143A);
+  newaMap["\u0947"]=fp(0x1143E); newaMap["\u0948"]=fp(0x1143F); newaMap["\u094B"]=fp(0x11440);
+  newaMap["\u094C"]=fp(0x11441); newaMap["\u094D"]=fp(0x11442); newaMap["\u0901"]=fp(0x11443);
+  newaMap["\u0902"]=fp(0x11444); newaMap["\u0903"]=fp(0x11445); newaMap["\u093C"]=fp(0x11446);
+  newaMap["\u0950"]=fp(0x11449); newaMap["\u0964"]=fp(0x1144B); newaMap["\u0965"]=fp(0x1144C);
+  newaMap["\u0966"]=fp(0x11450); newaMap["\u0967"]=fp(0x11451); newaMap["\u0968"]=fp(0x11452);
+  newaMap["\u0969"]=fp(0x11453); newaMap["\u096A"]=fp(0x11454); newaMap["\u096B"]=fp(0x11455);
+  newaMap["\u096C"]=fp(0x11456); newaMap["\u096D"]=fp(0x11457); newaMap["\u096E"]=fp(0x11458);
+  newaMap["\u096F"]=fp(0x11459);
+
+  function devaToNewa(text) {
+    var result = [], i = 0, n = text.length;
+    while (i < n) {
+      if (i + 2 < n) {
+        var tri = text.substring(i, i + 3);
+        if (multiCharMap.hasOwnProperty(tri)) { result.push(multiCharMap[tri]); i += 3; continue; }
+      }
+      var ch = text.charAt(i);
+      result.push(newaMap.hasOwnProperty(ch) ? newaMap[ch] : ch);
+      i++;
+    }
+    return result.join('');
+  }
+
+  // Reverse map: Newa → Devanagari
+  var reverseNewaMap = {};
+  for (var dKey in newaMap) {
+    reverseNewaMap[newaMap[dKey]] = dKey;
+  }
+  // Reverse multi-char map
+  var reverseMultiCharMap = {};
+  for (var mKey in multiCharMap) {
+    reverseMultiCharMap[multiCharMap[mKey]] = mKey;
+  }
+
+  function newaToDeva(text) {
+    var chars = Array.from(text);
+    var result = [];
+    for (var i = 0; i < chars.length; i++) {
+      var ch = chars[i];
+      if (reverseMultiCharMap.hasOwnProperty(ch)) {
+        result.push(reverseMultiCharMap[ch]);
+      } else if (reverseNewaMap.hasOwnProperty(ch)) {
+        result.push(reverseNewaMap[ch]);
+      } else {
+        result.push(ch);
+      }
+    }
+    return result.join('');
+  }
+
+  // ============================================================
+  // Transliteration Engine (based on NepaliTransliterator.kt)
+  // ============================================================
+  var CONSONANT = 1, VOWEL = 2, DIACRITIC = 3;
+
+  // Ordered mappings: longest roman first within each length group
+  var mappings = [
+    // 3-char
+    { roman: 'ksh', deva: '\u0915\u094D\u0937', type: CONSONANT },  // क्ष
+    { roman: 'Ksh', deva: '\u0915\u094D\u0937', type: CONSONANT },
+    { roman: 'chh', deva: '\u091B', type: CONSONANT },               // छ
+
+    // 2-char aspirated / special consonants
+    { roman: 'kh', deva: '\u0916', type: CONSONANT },
+    { roman: 'Kh', deva: '\u0916', type: CONSONANT },
+    { roman: 'gh', deva: '\u0918', type: CONSONANT },
+    { roman: 'Gh', deva: '\u0918', type: CONSONANT },
+    { roman: 'Ch', deva: '\u091B', type: CONSONANT },
+    { roman: 'ch', deva: '\u091A', type: CONSONANT },
+    { roman: 'jh', deva: '\u091D', type: CONSONANT },
+    { roman: 'Jh', deva: '\u091D', type: CONSONANT },
+    { roman: 'Th', deva: '\u0920', type: CONSONANT },
+    { roman: 'Dh', deva: '\u0922', type: CONSONANT },
+    { roman: 'th', deva: '\u0925', type: CONSONANT },
+    { roman: 'dh', deva: '\u0927', type: CONSONANT },
+    { roman: 'ph', deva: '\u092B', type: CONSONANT },
+    { roman: 'Ph', deva: '\u092B', type: CONSONANT },
+    { roman: 'bh', deva: '\u092D', type: CONSONANT },
+    { roman: 'Bh', deva: '\u092D', type: CONSONANT },
+    { roman: 'Sh', deva: '\u0937', type: CONSONANT },
+    { roman: 'sh', deva: '\u0936', type: CONSONANT },
+    { roman: 'nh', deva: '\u091E', type: CONSONANT },
+    { roman: 'Nh', deva: '\u091E', type: CONSONANT },
+    { roman: 'ng', deva: '\u0919', type: CONSONANT },
+    { roman: 'Ng', deva: '\u0919', type: CONSONANT },
+    { roman: 'hm', deva: '\u0939\u094D\u092E', type: CONSONANT },
+    { roman: 'hn', deva: '\u0939\u094D\u0928', type: CONSONANT },
+    { roman: 'lh', deva: '\u0933', type: CONSONANT },
+    { roman: 'Lh', deva: '\u0933', type: CONSONANT },
+
+    // 2-char conjuncts
+    { roman: 'tr', deva: '\u0924\u094D\u0930', type: CONSONANT },
+    { roman: 'Tr', deva: '\u0924\u094D\u0930', type: CONSONANT },
+    { roman: 'gn', deva: '\u091C\u094D\u091E', type: CONSONANT },
+    { roman: 'Gn', deva: '\u091C\u094D\u091E', type: CONSONANT },
+
+    // 2-char long vowels
+    { roman: 'aa', deva: '\u0906', type: VOWEL },
+    { roman: 'ii', deva: '\u0908', type: VOWEL },
+    { roman: 'uu', deva: '\u090A', type: VOWEL },
+    { roman: 'ai', deva: '\u0910', type: VOWEL },
+    { roman: 'au', deva: '\u0914', type: VOWEL },
+    { roman: 'ri', deva: '\u090B', type: VOWEL },
+    { roman: 'ee', deva: '\u0908', type: VOWEL },
+    { roman: 'oo', deva: '\u090A', type: VOWEL },
+
+    // Uppercase retroflex
+    { roman: 'T', deva: '\u091F', type: CONSONANT },
+    { roman: 'D', deva: '\u0921', type: CONSONANT },
+    { roman: 'N', deva: '\u0923', type: CONSONANT },
+
+    // Capital shortcuts
+    { roman: 'F', deva: '\u092B', type: CONSONANT },
+    { roman: 'X', deva: '\u0915\u094D\u0937', type: CONSONANT },
+    { roman: 'Z', deva: '\u091C\u094D\u091E', type: CONSONANT },
+    { roman: 'Q', deva: '\u0915\u094D\u0935', type: CONSONANT },
+    { roman: 'C', deva: '\u091B', type: CONSONANT },
+    { roman: 'B', deva: '\u092D', type: CONSONANT },
+    { roman: 'L', deva: '\u0933', type: CONSONANT },
+
+    // Standard lowercase consonants
+    { roman: 'k', deva: '\u0915', type: CONSONANT },
+    { roman: 'g', deva: '\u0917', type: CONSONANT },
+    { roman: 'c', deva: '\u091A', type: CONSONANT },
+    { roman: 'j', deva: '\u091C', type: CONSONANT },
+    { roman: 't', deva: '\u0924', type: CONSONANT },
+    { roman: 'd', deva: '\u0926', type: CONSONANT },
+    { roman: 'n', deva: '\u0928', type: CONSONANT },
+    { roman: 'p', deva: '\u092A', type: CONSONANT },
+    { roman: 'b', deva: '\u092C', type: CONSONANT },
+    { roman: 'm', deva: '\u092E', type: CONSONANT },
+    { roman: 'y', deva: '\u092F', type: CONSONANT },
+    { roman: 'r', deva: '\u0930', type: CONSONANT },
+    { roman: 'l', deva: '\u0932', type: CONSONANT },
+    { roman: 'v', deva: '\u0935', type: CONSONANT },
+    { roman: 'w', deva: '\u0935', type: CONSONANT },
+    { roman: 's', deva: '\u0938', type: CONSONANT },
+    { roman: 'S', deva: '\u0938', type: CONSONANT },
+    { roman: 'h', deva: '\u0939', type: CONSONANT },
+    { roman: 'f', deva: '\u092B', type: CONSONANT },
+    { roman: 'x', deva: '\u0915\u094D\u0937', type: CONSONANT },
+    { roman: 'z', deva: '\u091D', type: CONSONANT },
+
+    // Long vowel capitals
+    { roman: 'A', deva: '\u0906', type: VOWEL },
+    { roman: 'I', deva: '\u0908', type: VOWEL },
+    { roman: 'U', deva: '\u090A', type: VOWEL },
+    { roman: 'E', deva: '\u0910', type: VOWEL },
+    { roman: 'O', deva: '\u0914', type: VOWEL },
+
+    // Short vowels
+    { roman: 'a', deva: '\u0905', type: VOWEL },
+    { roman: 'i', deva: '\u0907', type: VOWEL },
+    { roman: 'u', deva: '\u0909', type: VOWEL },
+    { roman: 'e', deva: '\u090F', type: VOWEL },
+    { roman: 'o', deva: '\u0913', type: VOWEL },
+
+    // Diacritics
+    { roman: 'M', deva: '\u0902', type: DIACRITIC },
+    { roman: 'H', deva: '\u0903', type: DIACRITIC },
+    { roman: '~', deva: '\u0901', type: DIACRITIC },
+    { roman: '|', deva: '\u094D', type: DIACRITIC },
+  ];
+
+  // Matra map: independent vowel → matra form
+  var matraMap = {
+    '\u0905': '',       // अ → inherent (nothing)
+    '\u0906': '\u093E', // आ → ा
+    '\u0907': '\u093F', // इ → ि
+    '\u0908': '\u0940', // ई → ी
+    '\u0909': '\u0941', // उ → ु
+    '\u090A': '\u0942', // ऊ → ू
+    '\u090F': '\u0947', // ए → े
+    '\u0910': '\u0948', // ऐ → ै
+    '\u0913': '\u094B', // ओ → ो
+    '\u0914': '\u094C', // औ → ौ
+    '\u090B': '\u0943', // ऋ → ृ
+  };
+
+  var VIRAMA = '\u094D';
+
+  // Devanagari digits
+  var digits = { '0':'\u0966','1':'\u0967','2':'\u0968','3':'\u0969','4':'\u096A',
+                 '5':'\u096B','6':'\u096C','7':'\u096D','8':'\u096E','9':'\u096F' };
+
+  // Punctuation
+  var punctuation = { '..':'\u0965', '.':'\u0964', ',':',', '!':'!', '?':'?',
+                      '(':'(', ')':')', '-':'-', "'":'\u093D' };
+
+  function findMatch(input, pos) {
+    for (var i = 0; i < mappings.length; i++) {
+      var m = mappings[i];
+      if (input.substring(pos, pos + m.roman.length) === m.roman) return m;
+    }
+    return null;
+  }
+
+  /**
+   * Transliterate romanized text to Devanagari
+   * Follows the NepaliTransliterator.kt pattern exactly
+   */
+  function transliterate(input) {
+    var result = '';
+    var i = 0;
+    var prevConsonant = false;
+
+    while (i < input.length) {
+      var m = findMatch(input, i);
+      if (!m) {
+        result += input[i];
+        prevConsonant = false;
+        i++;
+        continue;
+      }
+      if (m.type === CONSONANT) {
+        if (prevConsonant) result += VIRAMA;
+        result += m.deva;
+        prevConsonant = true;
+      } else if (m.type === VOWEL) {
+        if (prevConsonant) {
+          var matra = matraMap[m.deva];
+          if (matra) result += matra;
+          // inherent 'a' → nothing appended
+        } else {
+          result += m.deva;
+        }
+        prevConsonant = false;
+      } else { // DIACRITIC
+        result += m.deva;
+        prevConsonant = false;
+      }
+      i += m.roman.length;
+    }
+    return result;
+  }
+
+  // ============================================================
+  // Dictionary-powered prefix search (Devanagari + Newa)
+  // ============================================================
+  var neDictWords = (typeof NE_DICTIONARY !== 'undefined') ? NE_DICTIONARY : [];
+  var newDictWords = (typeof NEW_DICTIONARY !== 'undefined') ? NEW_DICTIONARY : [];
+
+  // Build prefix index for a word list
+  function buildPrefixIndexFor(words) {
+    var index = {};
+    for (var i = 0; i < words.length; i++) {
+      var w = words[i];
+      for (var plen = 1; plen <= Math.min(3, w.length); plen++) {
+        var pfx = w.substring(0, plen);
+        if (!index[pfx]) index[pfx] = [];
+        if (index[pfx].length < 30) {
+          index[pfx].push(w);
+        }
+      }
+    }
+    return index;
+  }
+
+  var nePrefixIndex = buildPrefixIndexFor(neDictWords);
+  var newPrefixIndex = buildPrefixIndexFor(newDictWords);
+
+  function findDictWords(prefix, useNewaDict) {
+    var searchPrefix = prefix;
+    // Remove trailing virama (Devanagari or Newa) for prefix search
+    if (searchPrefix.endsWith(VIRAMA)) {
+      searchPrefix = searchPrefix.slice(0, -1);
+    }
+    var newaVirama = String.fromCodePoint(0x11442);
+    if (searchPrefix.endsWith(newaVirama)) {
+      searchPrefix = searchPrefix.slice(0, -newaVirama.length);
+    }
+    if (!searchPrefix) return [];
+
+    var index = useNewaDict ? newPrefixIndex : nePrefixIndex;
+
+    // Try prefix index (check up to 3 chars - but Newa chars are multi-byte)
+    // Use Array.from to handle surrogate pairs in Newa script
+    var chars = Array.from(searchPrefix);
+    var key = chars.slice(0, Math.min(3, chars.length)).join('');
+    while (key.length > 0) {
+      var bucket = index[key];
+      if (bucket) {
+        var results = [];
+        for (var i = 0; i < bucket.length; i++) {
+          if (bucket[i].indexOf(searchPrefix) === 0 && bucket[i] !== searchPrefix) {
+            results.push(bucket[i]);
+          }
+        }
+        if (results.length > 0) return results.slice(0, 8);
+      }
+      // Remove last char (handling surrogate pairs)
+      var keyChars = Array.from(key);
+      keyChars.pop();
+      key = keyChars.join('');
+    }
+    return [];
+  }
+
+  /**
+   * Generate rich suggestions: transliteration variants + dictionary words
+   */
+  function getSuggestions(buffer) {
+    if (!buffer || buffer.length === 0) return [];
+
+    var suggestions = [];
+    var seen = {};
+    var main = transliterate(buffer);
+
+    // isNative: true means text is already in target script (no conversion needed)
+    function addUnique(text, hint, isNative) {
+      if (!seen[text]) {
+        seen[text] = true;
+        suggestions.push({ text: text, hint: hint || '', isNative: !!isNative });
+      }
+    }
+
+    // 1. Primary transliteration (Devanagari - will be converted for display in Newa mode)
+    addUnique(main, buffer, false);
+
+    // 2. Dictionary word suggestions
+    if (isNewaMode) {
+      // Search Newa dictionary with Newa prefix
+      var newaPrefix = devaToNewa(main);
+      var dictMatches = findDictWords(newaPrefix, true);
+      for (var di = 0; di < dictMatches.length; di++) {
+        addUnique(dictMatches[di], '', true); // already in Newa script
+      }
+    } else {
+      // Search Devanagari dictionary
+      var dictMatches = findDictWords(main, false);
+      for (var di = 0; di < dictMatches.length; di++) {
+        addUnique(dictMatches[di], '', true); // already in Devanagari
+      }
+    }
+
+    // 3. With trailing virama if last char produced a consonant
+    var withVirama = transliterate(buffer + '|');
+    if (withVirama !== main) addUnique(withVirama, buffer + '|', false);
+
+    // 4. Anusvara variant
+    var lastCh = buffer[buffer.length - 1];
+    if ('nmNM'.indexOf(lastCh) >= 0) {
+      var base = buffer.slice(0, -1);
+      var baseT = transliterate(base);
+      if (baseT.endsWith(VIRAMA)) baseT = baseT.slice(0, -1);
+      var withAnusvara = baseT + '\u0902';
+      addUnique(withAnusvara, base + 'M', false);
+    }
+
+    // 5. Chandrabindu variant for trailing n
+    if (lastCh === 'n' || lastCh === 'N') {
+      var base2 = buffer.slice(0, -1);
+      var base2T = transliterate(base2);
+      if (base2T.endsWith(VIRAMA)) base2T = base2T.slice(0, -1);
+      var withChandrabindu = base2T + '\u0901';
+      addUnique(withChandrabindu, base2 + '~', false);
+    }
+
+    // 6. Alternate vowel lengths
+    var vowelAlts = {
+      'a': 'aa', 'i': 'ii', 'u': 'uu', 'e': 'ai', 'o': 'au',
+      'aa': 'a', 'ii': 'i', 'uu': 'u', 'ai': 'e', 'au': 'o',
+      'ee': 'ii', 'oo': 'uu',
+    };
+    for (var vk in vowelAlts) {
+      if (buffer.endsWith(vk)) {
+        var altBuf = buffer.slice(0, -vk.length) + vowelAlts[vk];
+        var altResult = transliterate(altBuf);
+        addUnique(altResult, altBuf, false);
+        // Also search dictionary for vowel-alt prefix
+        if (isNewaMode) {
+          var altNewaPrefix = devaToNewa(altResult);
+          var altDict = findDictWords(altNewaPrefix, true);
+          for (var ai = 0; ai < Math.min(3, altDict.length); ai++) {
+            addUnique(altDict[ai], '', true);
+          }
+        } else {
+          var altDict = findDictWords(altResult, false);
+          for (var ai = 0; ai < Math.min(3, altDict.length); ai++) {
+            addUnique(altDict[ai], '', true);
+          }
+        }
+      }
+    }
+
+    // 7. Capital letter alternatives
+    var capAlts = { 't': 'T', 'd': 'D', 'n': 'N', 's': 'S', 'b': 'B', 'c': 'C', 'l': 'L' };
+    if (capAlts[lastCh]) {
+      var capBuf = buffer.slice(0, -1) + capAlts[lastCh];
+      var capResult = transliterate(capBuf);
+      addUnique(capResult, capBuf, false);
+    }
+
+    // 8. sh/Sh alternatives
+    if (buffer.endsWith('sh')) {
+      addUnique(transliterate(buffer.slice(0, -2) + 'Sh'), buffer.slice(0, -2) + 'Sh', false);
+    }
+    if (buffer.endsWith('Sh')) {
+      addUnique(transliterate(buffer.slice(0, -2) + 'sh'), buffer.slice(0, -2) + 'sh', false);
+    }
+
+    // 9. Aspirated/unaspirated alternatives
+    if (buffer.endsWith('h') && buffer.length >= 2) {
+      var noH = buffer.slice(0, -1);
+      addUnique(transliterate(noH), noH, false);
+    }
+
+    return suggestions.slice(0, 9);
+  }
+
+  // ============================================================
+  // UI Logic
+  // ============================================================
+  var textarea = document.getElementById('devanagari-output');
+  var suggestionBar = document.getElementById('suggestion-bar');
+  var editorArea = document.getElementById('editor-area');
+  var btnDeva = document.getElementById('btn-devanagari');
+  var btnNewa = document.getElementById('btn-newa');
+  var scriptLabel = document.getElementById('script-label');
+  var btnCopy = document.getElementById('btn-copy');
+  var btnClear = document.getElementById('btn-clear');
+  var keyboardContainer = document.getElementById('keyboard-container');
+  var keyboardToggle = document.getElementById('keyboard-toggle');
+
+  var keyboardTitle = document.getElementById('keyboard-title');
+  var helpSection = document.getElementById('help-section');
+
+  var isNewaMode = false;
+  var romanBuffer = '';
+  var selectedSuggestion = 0;
+  var keyboardVisible = true;
+  var devanagariText = '';
+
+  // ---- Suggestion bar (horizontal, below textarea) ----
+  function showSuggestions() {
+    var suggestions = getSuggestions(romanBuffer);
+    if (suggestions.length === 0 || romanBuffer.length === 0) {
+      hideSuggestionBar();
+      return;
+    }
+    selectedSuggestion = 0;
+    suggestionBar.innerHTML = '';
+    suggestionBar.className = 'suggestion-bar' + (isNewaMode ? ' newa-mode' : '');
+    suggestions.forEach(function(s, idx) {
+      var div = document.createElement('div');
+      div.className = 'suggestion-item' + (idx === 0 ? ' selected' : '');
+
+      var indexSpan = document.createElement('span');
+      indexSpan.className = 'index-hint';
+      indexSpan.textContent = (idx + 1);
+      div.appendChild(indexSpan);
+
+      if (isNewaMode) {
+        // Vertical: Newa text on top, Devanagari below
+        var group = document.createElement('span');
+        group.className = 'suggestion-text-group';
+
+        var mainSpan = document.createElement('span');
+        mainSpan.className = 'main-text';
+        mainSpan.style.fontFamily = "'Noto Sans Newa', sans-serif";
+        var newaText = s.isNative ? s.text : devaToNewa(s.text);
+        mainSpan.textContent = newaText;
+        group.appendChild(mainSpan);
+
+        // Devanagari text below all suggestions
+        var devaBelow = document.createElement('span');
+        devaBelow.className = 'suggestion-deva-below';
+        // For transliteration results, .text is already Devanagari
+        // For native Newa dict words, convert back to Devanagari
+        devaBelow.textContent = s.isNative ? newaToDeva(s.text) : s.text;
+        group.appendChild(devaBelow);
+
+        div.appendChild(group);
+      } else {
+        var mainSpan = document.createElement('span');
+        mainSpan.className = 'main-text';
+        mainSpan.textContent = s.text;
+        div.appendChild(mainSpan);
+      }
+
+      div.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        acceptSuggestion(idx);
+      });
+      suggestionBar.appendChild(div);
+    });
+
+    suggestionBar.style.display = 'block';
+    editorArea.classList.add('has-suggestions');
+  }
+
+  function hideSuggestionBar() {
+    suggestionBar.style.display = 'none';
+    editorArea.classList.remove('has-suggestions');
+    romanBuffer = '';
+  }
+
+  function hideSuggestionsOnly() {
+    suggestionBar.style.display = 'none';
+    editorArea.classList.remove('has-suggestions');
+  }
+
+  function acceptSuggestion(idx) {
+    var suggestions = getSuggestions(romanBuffer);
+    if (idx < 0 || idx >= suggestions.length) idx = 0;
+    var chosen = suggestions[idx];
+
+    var val = textarea.value;
+    var cursorPos = textarea.selectionStart;
+    var bufStart = cursorPos - romanBuffer.length;
+
+    var finalText;
+    if (isNewaMode) {
+      // Native Newa dict words are already in Newa; transliteration results need conversion
+      finalText = chosen.isNative ? chosen.text : devaToNewa(chosen.text);
+    } else {
+      finalText = chosen.text;
+    }
+    textarea.value = val.substring(0, bufStart) + finalText + val.substring(cursorPos);
+    var newPos = bufStart + finalText.length;
+    textarea.selectionStart = textarea.selectionEnd = newPos;
+
+    if (isNewaMode) {
+      var devBefore = devanagariText.substring(0, bufStart);
+      // Store Devanagari equivalent for mode switching
+      devanagariText = devBefore + (chosen.isNative ? chosen.text : chosen.text);
+    } else {
+      devanagariText = textarea.value;
+    }
+
+    romanBuffer = '';
+    hideSuggestionsOnly();
+    textarea.focus();
+  }
+
+  // ---- Number key shortcuts for suggestions ----
+  function handleNumberShortcut(num) {
+    if (suggestionBar.style.display === 'block' && romanBuffer.length > 0) {
+      var suggestions = getSuggestions(romanBuffer);
+      var idx = num - 1;
+      if (idx >= 0 && idx < suggestions.length) {
+        acceptSuggestion(idx);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ---- Textarea input handling ----
+  textarea.addEventListener('keydown', function(e) {
+    // Number keys 1-9 to pick suggestion
+    if (suggestionBar.style.display === 'block' && romanBuffer.length > 0) {
+      if (e.key >= '1' && e.key <= '9' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        handleNumberShortcut(parseInt(e.key));
+        return;
+      }
+    }
+
+    // Arrow keys for suggestion navigation
+    if (suggestionBar.style.display === 'block') {
+      var suggestions = getSuggestions(romanBuffer);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedSuggestion = Math.min(selectedSuggestion + 1, suggestions.length - 1);
+        updateSuggestionHighlight();
+        return;
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedSuggestion = Math.max(selectedSuggestion - 1, 0);
+        updateSuggestionHighlight();
+        return;
+      }
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+        if (romanBuffer.length > 0) {
+          e.preventDefault();
+          acceptSuggestion(selectedSuggestion);
+          if (e.key === ' ') {
+            var pos = textarea.selectionStart;
+            textarea.value = textarea.value.substring(0, pos) + ' ' + textarea.value.substring(pos);
+            textarea.selectionStart = textarea.selectionEnd = pos + 1;
+            if (!isNewaMode) devanagariText = textarea.value;
+          }
+          if (e.key === 'Enter') {
+            var pos2 = textarea.selectionStart;
+            textarea.value = textarea.value.substring(0, pos2) + '\n' + textarea.value.substring(pos2);
+            textarea.selectionStart = textarea.selectionEnd = pos2 + 1;
+            if (!isNewaMode) devanagariText = textarea.value;
+          }
+          return;
+        }
+      }
+      if (e.key === 'Escape') {
+        // Remove the roman buffer text and hide
+        var pos3 = textarea.selectionStart;
+        var bufStart = pos3 - romanBuffer.length;
+        textarea.value = textarea.value.substring(0, bufStart) + textarea.value.substring(pos3);
+        textarea.selectionStart = textarea.selectionEnd = bufStart;
+        romanBuffer = '';
+        hideSuggestionsOnly();
+        return;
+      }
+    }
+
+    // Backspace
+    if (e.key === 'Backspace' && romanBuffer.length > 0) {
+      e.preventDefault();
+      romanBuffer = romanBuffer.slice(0, -1);
+      var pos4 = textarea.selectionStart;
+      textarea.value = textarea.value.substring(0, pos4 - 1) + textarea.value.substring(pos4);
+      textarea.selectionStart = textarea.selectionEnd = pos4 - 1;
+      if (romanBuffer.length > 0) {
+        showSuggestions();
+      } else {
+        hideSuggestionsOnly();
+      }
+      return;
+    }
+  });
+
+  textarea.addEventListener('keypress', function(e) {
+    var ch = e.key;
+    if (ch.length !== 1) return;
+
+    // Letters and tilde/pipe (diacritics)
+    if (/[a-zA-Z~|]/.test(ch)) {
+      e.preventDefault();
+      romanBuffer += ch;
+      var pos = textarea.selectionStart;
+      textarea.value = textarea.value.substring(0, pos) + ch + textarea.value.substring(pos);
+      textarea.selectionStart = textarea.selectionEnd = pos + 1;
+      showSuggestions();
+      return;
+    }
+
+    // Digit
+    if (digits.hasOwnProperty(ch)) {
+      // If suggestion active, number picks suggestion (handled in keydown)
+      // Otherwise convert digit
+      if (romanBuffer.length > 0) {
+        acceptSuggestion(selectedSuggestion);
+      }
+      e.preventDefault();
+      var devDigit = isNewaMode ? devaToNewa(digits[ch]) : digits[ch];
+      var pos2 = textarea.selectionStart;
+      textarea.value = textarea.value.substring(0, pos2) + devDigit + textarea.value.substring(pos2);
+      textarea.selectionStart = textarea.selectionEnd = pos2 + devDigit.length;
+      if (!isNewaMode) devanagariText = textarea.value;
+      return;
+    }
+
+    // Punctuation
+    var foundPunct = false;
+    for (var plen = 2; plen >= 1; plen--) {
+      // Check if current char + previous buffer chars form punctuation
+      if (plen === 1 && punctuation.hasOwnProperty(ch)) {
+        if (romanBuffer.length > 0) acceptSuggestion(selectedSuggestion);
+        e.preventDefault();
+        var punct = isNewaMode ? devaToNewa(punctuation[ch]) : punctuation[ch];
+        var pos3 = textarea.selectionStart;
+        textarea.value = textarea.value.substring(0, pos3) + punct + textarea.value.substring(pos3);
+        textarea.selectionStart = textarea.selectionEnd = pos3 + punct.length;
+        if (!isNewaMode) devanagariText = textarea.value;
+        foundPunct = true;
+        break;
+      }
+    }
+  });
+
+  textarea.addEventListener('paste', function() {
+    if (romanBuffer.length > 0) acceptSuggestion(selectedSuggestion);
+    setTimeout(function() { if (!isNewaMode) devanagariText = textarea.value; }, 0);
+  });
+
+  function updateSuggestionHighlight() {
+    var items = suggestionBar.querySelectorAll('.suggestion-item');
+    items.forEach(function(item, idx) {
+      item.classList.toggle('selected', idx === selectedSuggestion);
+    });
+    // Scroll selected into view
+    if (items[selectedSuggestion]) {
+      items[selectedSuggestion].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+  }
+
+  // ---- Script toggle ----
+  btnDeva.addEventListener('click', function() {
+    if (!isNewaMode) return;
+    isNewaMode = false;
+    btnDeva.classList.add('active');
+    btnNewa.classList.remove('active');
+    scriptLabel.textContent = 'Devanagari';
+    textarea.classList.remove('newa-script');
+    textarea.value = devanagariText;
+    buildKeyboard();
+    buildHelpSection();
+  });
+
+  btnNewa.addEventListener('click', function() {
+    if (isNewaMode) return;
+    if (romanBuffer.length > 0) acceptSuggestion(selectedSuggestion);
+    isNewaMode = true;
+    btnNewa.classList.add('active');
+    btnDeva.classList.remove('active');
+    scriptLabel.textContent = 'Nepal Lipi (Newa)';
+    textarea.classList.add('newa-script');
+    devanagariText = textarea.value;
+    textarea.value = devaToNewa(devanagariText);
+    buildKeyboard();
+    buildHelpSection();
+  });
+
+  // ---- Copy / Clear ----
+  btnCopy.addEventListener('click', function() {
+    navigator.clipboard.writeText(textarea.value).then(function() {
+      var orig = btnCopy.textContent;
+      btnCopy.textContent = 'Copied!';
+      setTimeout(function() { btnCopy.textContent = orig; }, 1500);
+    });
+  });
+
+  btnClear.addEventListener('click', function() {
+    textarea.value = '';
+    devanagariText = '';
+    romanBuffer = '';
+    hideSuggestionsOnly();
+    textarea.focus();
+  });
+
+  // ---- Virtual Keyboard ----
+  var layoutToggle = document.getElementById('layout-toggle');
+  var currentLayout = 'phonetic'; // 'phonetic' or 'bakamaan'
+
+  // Phonetic layout (varnamala order)
+  var phoneticLayout = [
+    [
+      { label: '\u091F', sub: 'T', roman: 'T' },
+      { label: '\u0920', sub: 'Th', roman: 'Th' },
+      { label: '\u0921', sub: 'D', roman: 'D' },
+      { label: '\u0922', sub: 'Dh', roman: 'Dh' },
+      { label: '\u0923', sub: 'N', roman: 'N' },
+      { label: '\u0905', sub: 'a', roman: 'a' },
+      { label: '\u0906', sub: 'aa', roman: 'aa' },
+      { label: '\u0907', sub: 'i', roman: 'i' },
+      { label: '\u0908', sub: 'ii', roman: 'ii' },
+      { label: '\u0909', sub: 'u', roman: 'u' },
+      { label: '\u090A', sub: 'uu', roman: 'uu' },
+      { label: '\u090F', sub: 'e', roman: 'e' },
+      { label: '\u0910', sub: 'ai', roman: 'ai' },
+      { label: '\u0913', sub: 'o', roman: 'o' },
+      { label: '\u0914', sub: 'au', roman: 'au' },
+    ],
+    [
+      { label: '\u0915', sub: 'ka', roman: 'ka' },
+      { label: '\u0916', sub: 'kha', roman: 'kha' },
+      { label: '\u0917', sub: 'ga', roman: 'ga' },
+      { label: '\u0918', sub: 'gha', roman: 'gha' },
+      { label: '\u0919', sub: 'ng', roman: 'ng' },
+      { label: '\u091A', sub: 'cha', roman: 'cha' },
+      { label: '\u091B', sub: 'chha', roman: 'chha' },
+      { label: '\u091C', sub: 'ja', roman: 'ja' },
+      { label: '\u091D', sub: 'jha', roman: 'jha' },
+      { label: '\u091E', sub: 'nh', roman: 'nh' },
+    ],
+    [
+      { label: '\u0924', sub: 'ta', roman: 'ta' },
+      { label: '\u0925', sub: 'tha', roman: 'tha' },
+      { label: '\u0926', sub: 'da', roman: 'da' },
+      { label: '\u0927', sub: 'dha', roman: 'dha' },
+      { label: '\u0928', sub: 'na', roman: 'na' },
+      { label: '\u092A', sub: 'pa', roman: 'pa' },
+      { label: '\u092B', sub: 'pha', roman: 'pha' },
+      { label: '\u092C', sub: 'ba', roman: 'ba' },
+      { label: '\u092D', sub: 'bha', roman: 'bha' },
+      { label: '\u092E', sub: 'ma', roman: 'ma' },
+    ],
+    [
+      { label: '\u092F', sub: 'ya', roman: 'ya' },
+      { label: '\u0930', sub: 'ra', roman: 'ra' },
+      { label: '\u0932', sub: 'la', roman: 'la' },
+      { label: '\u0935', sub: 'wa', roman: 'wa' },
+      { label: '\u0936', sub: 'sha', roman: 'sha' },
+      { label: '\u0937', sub: 'Sha', roman: 'Sha' },
+      { label: '\u0938', sub: 'sa', roman: 'sa' },
+      { label: '\u0939', sub: 'ha', roman: 'ha' },
+      { label: '\u0915\u094D\u0937', sub: 'ksha', roman: 'ksha' },
+      { label: '\u091C\u094D\u091E', sub: 'gn', roman: 'gn' },
+    ],
+    [
+      { label: '\u0902', sub: 'M', roman: 'M' },
+      { label: '\u0903', sub: 'H', roman: 'H' },
+      { label: '\u0901', sub: '~', roman: '~' },
+      { label: '\u090B', sub: 'ri', roman: 'ri' },
+      { label: '\u0964', sub: '.', roman: '.' },
+      { label: ' ', sub: 'Space', roman: ' ', wide: 'space' },
+      { label: '\u232B', sub: '', roman: null, wide: 'backspace' },
+    ]
+  ];
+
+  // Traditional बकमान layout (Nepali typewriter order)
+  var bakamaanLayout = [
+    [
+      { label: '\u091F', sub: 'T', roman: 'T' },
+      { label: '\u0927', sub: 'dha', roman: 'dha' },
+      { label: '\u092D', sub: 'bha', roman: 'bha' },
+      { label: '\u091A', sub: 'cha', roman: 'cha' },
+      { label: '\u0924', sub: 'ta', roman: 'ta' },
+      { label: '\u0925', sub: 'tha', roman: 'tha' },
+      { label: '\u0917', sub: 'ga', roman: 'ga' },
+      { label: '\u0937', sub: 'Sha', roman: 'Sha' },
+      { label: '\u092F', sub: 'ya', roman: 'ya' },
+      { label: '\u0909', sub: 'u', roman: 'u' },
+      { label: '\u0942', sub: 'uu', roman: 'uu' },
+      { label: '\u0947', sub: 'e', roman: 'e' },
+      { label: '\u0930', sub: 'ra', roman: 'ra' },
+    ],
+    [
+      { label: '\u092C', sub: 'ba', roman: 'ba' },
+      { label: '\u0915', sub: 'ka', roman: 'ka' },
+      { label: '\u092E', sub: 'ma', roman: 'ma' },
+      { label: '\u093E', sub: 'aa', roman: 'aa' },
+      { label: '\u0928', sub: 'na', roman: 'na' },
+      { label: '\u091C', sub: 'ja', roman: 'ja' },
+      { label: '\u0935', sub: 'wa', roman: 'wa' },
+      { label: '\u092A', sub: 'pa', roman: 'pa' },
+      { label: '\u093F', sub: 'i', roman: 'i' },
+      { label: '\u0932', sub: 'la', roman: 'la' },
+      { label: '\u0938', sub: 'sa', roman: 'sa' },
+      { label: '\u0941', sub: 'u-m', roman: 'u' },
+      { label: '\u0940', sub: 'ii', roman: 'ii' },
+    ],
+    [
+      { label: '\u0936', sub: 'sha', roman: 'sha' },
+      { label: '\u0939', sub: 'ha', roman: 'ha' },
+      { label: '\u0905', sub: 'a', roman: 'a' },
+      { label: '\u0916', sub: 'kha', roman: 'kha' },
+      { label: '\u0926', sub: 'da', roman: 'da' },
+      { label: '\u0921', sub: 'D', roman: 'D' },
+      { label: '\u0918', sub: 'gha', roman: 'gha' },
+      { label: '\u092B', sub: 'pha', roman: 'pha' },
+      { label: '\u0923', sub: 'N', roman: 'N' },
+      { label: '\u091D', sub: 'jha', roman: 'jha' },
+      { label: '\u091E', sub: 'nh', roman: 'nh' },
+    ],
+    [
+      { label: '\u0919', sub: 'ng', roman: 'ng' },
+      { label: '\u091B', sub: 'chha', roman: 'chha' },
+      { label: '\u0920', sub: 'Th', roman: 'Th' },
+      { label: '\u0922', sub: 'Dh', roman: 'Dh' },
+      { label: '\u0948', sub: 'ai', roman: 'ai' },
+      { label: '\u094B', sub: 'o', roman: 'o' },
+      { label: '\u094C', sub: 'au', roman: 'au' },
+      { label: '\u0915\u094D\u0937', sub: 'ksha', roman: 'ksha' },
+      { label: '\u091C\u094D\u091E', sub: 'gn', roman: 'gn' },
+      { label: '\u094D', sub: '|', roman: '|' },
+    ],
+    [
+      { label: '\u0902', sub: 'M', roman: 'M' },
+      { label: '\u0903', sub: 'H', roman: 'H' },
+      { label: '\u0901', sub: '~', roman: '~' },
+      { label: '\u090B', sub: 'ri', roman: 'ri' },
+      { label: '\u0964', sub: '.', roman: '.' },
+      { label: ' ', sub: 'Space', roman: ' ', wide: 'space' },
+      { label: '\u232B', sub: '', roman: null, wide: 'backspace' },
+    ]
+  ];
+
+  function getActiveLayout() {
+    return currentLayout === 'bakamaan' ? bakamaanLayout : phoneticLayout;
+  }
+
+  // Convert Devanagari text for display based on current mode
+  function displayText(devaText) {
+    return isNewaMode ? devaToNewa(devaText) : devaText;
+  }
+
+  function buildKeyboard() {
+    var layout = getActiveLayout();
+    keyboardContainer.innerHTML = '';
+    layout.forEach(function(row) {
+      var rowDiv = document.createElement('div');
+      rowDiv.className = 'keyboard-row';
+      row.forEach(function(keyDef) {
+        var btn = document.createElement('button');
+        btn.className = 'key';
+        if (keyDef.wide) btn.classList.add(keyDef.wide);
+        if (isNewaMode && !keyDef.wide) btn.classList.add('newa-key');
+        btn.type = 'button';
+
+        if (keyDef.wide === 'space') {
+          btn.textContent = 'Space';
+        } else if (keyDef.wide === 'backspace') {
+          btn.innerHTML = keyDef.label;
+        } else {
+          var mainSpan = document.createElement('span');
+          mainSpan.textContent = isNewaMode ? devaToNewa(keyDef.label) : keyDef.label;
+          btn.appendChild(mainSpan);
+          if (isNewaMode) {
+            // Show Devanagari letter at bottom in Nepal Lipi mode
+            var devaSpan = document.createElement('span');
+            devaSpan.className = 'deva-sub';
+            devaSpan.textContent = keyDef.label;
+            btn.appendChild(devaSpan);
+          } else if (keyDef.sub) {
+            var subSpan = document.createElement('span');
+            subSpan.className = 'sub';
+            subSpan.textContent = keyDef.sub;
+            btn.appendChild(subSpan);
+          }
+        }
+
+        btn.tabIndex = -1;
+        btn.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          handleKeyPress(keyDef);
+        });
+        rowDiv.appendChild(btn);
+      });
+      keyboardContainer.appendChild(rowDiv);
+    });
+    keyboardTitle.textContent = isNewaMode ? 'Nepal Lipi Keyboard' : 'Devanagari Keyboard';
+    layoutToggle.textContent = currentLayout === 'bakamaan' ? 'Phonetic' : '\u092C\u0915\u092E\u093E\u0928';
+  }
+
+  function buildHelpSection() {
+    var d = function(t) { return displayText(t); };
+    var newaClass = isNewaMode ? ' style="font-family:\'Noto Sans Newa\', sans-serif;"' : '';
+    var scriptName = isNewaMode ? 'Nepal Lipi (Newa)' : 'Devanagari';
+
+    var html = '<h3>How to Type ' + scriptName + '</h3>';
+    html += '<div class="help-columns"><div>';
+    html += '<table class="help-table"><thead><tr><th>Type</th><th>Get</th><th>Example</th></tr></thead><tbody>';
+
+    var vowelRows = [
+      ['a', '\u0905', 'ama', '\u0905\u092E'],
+      ['aa / A', '\u0906', 'Ama', '\u0906\u092E'],
+      ['i', '\u0907', 'iha', '\u0907\u0939'],
+      ['ii / I', '\u0908', 'biimaa', '\u092C\u0940\u092E\u093E'],
+      ['u', '\u0909', 'uba', '\u0909\u092C'],
+      ['uu / U', '\u090A', 'guu', '\u0917\u0942'],
+      ['e', '\u090F', 'ek', '\u090F\u0915\u094D'],
+      ['ai / E', '\u0910', 'aich', '\u0910\u091A\u094D'],
+      ['o', '\u0913', 'ok', '\u0913\u0915\u094D'],
+      ['au / O', '\u0914', 'aur', '\u0914\u0930\u094D'],
+      ['ri', '\u090B', 'rishi', '\u090B\u0937\u093F'],
+    ];
+    vowelRows.forEach(function(r) {
+      html += '<tr><td>' + r[0] + '</td><td' + newaClass + '>' + d(r[1]) + '</td><td>' + r[2] + ' → <span' + newaClass + '>' + d(r[3]) + '</span></td></tr>';
+    });
+    html += '</tbody></table></div><div>';
+
+    html += '<table class="help-table"><thead><tr><th>Type</th><th>Get</th><th>Note</th></tr></thead><tbody>';
+    var consRows = [
+      ['ka', '\u0915', ''],
+      ['kha', '\u0916', ''],
+      ['ga', '\u0917', ''],
+      ['gha', '\u0918', ''],
+      ['cha', '\u091A', ''],
+      ['chha / Cha', '\u091B', ''],
+      ['Ta', '\u091F', 'Capital T = retroflex'],
+      ['ta', '\u0924', 'Lowercase t = dental'],
+      ['Da', '\u0921', 'Capital D = retroflex'],
+      ['da', '\u0926', 'Lowercase d = dental'],
+      ['sha', '\u0936', 'Sha=\u0937'],
+    ];
+    consRows.forEach(function(r) {
+      var note = r[2];
+      if (isNewaMode && note.indexOf('\u0937') >= 0) {
+        note = 'Sha=' + d('\u0937');
+      }
+      html += '<tr><td>' + r[0] + '</td><td' + newaClass + '>' + d(r[1]) + '</td><td>' + note + '</td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+
+    html += '<div style="margin-top:16px;"><table class="help-table"><thead><tr><th>Special</th><th>Get</th><th>Note</th></tr></thead><tbody>';
+    var specialRows = [
+      ['ksh / X / x', '\u0915\u094D\u0937', ''],
+      ['gn / Z', '\u091C\u094D\u091E', ''],
+      ['tr', '\u0924\u094D\u0930', ''],
+      ['F / f', '\u092B', ''],
+      ['C / B / L', '\u091B / \u092D / \u0933', 'Capital shortcuts'],
+      ['M', '\u0902', 'Anusvara'],
+      ['H', '\u0903', 'Visarga'],
+      ['~', '\u0901', 'Chandrabindu'],
+      ['|', '\u094D', 'Explicit halant'],
+      ['.', '\u0964', 'Period gives danda'],
+      ['..', '\u0965', 'Double danda'],
+      ['0-9', '\u0966-\u096F', 'Digits convert automatically'],
+    ];
+    specialRows.forEach(function(r) {
+      // For the "C / B / L" row, convert each character separately
+      var getCol = r[1];
+      if (getCol.indexOf(' / ') >= 0) {
+        getCol = getCol.split(' / ').map(function(c) { return d(c); }).join(' / ');
+      } else if (getCol.indexOf('-') >= 0) {
+        var parts = getCol.split('-');
+        getCol = d(parts[0]) + '-' + d(parts[1]);
+      } else {
+        getCol = d(getCol);
+      }
+      html += '<tr><td>' + r[0] + '</td><td' + newaClass + '>' + getCol + '</td><td>' + r[2] + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+
+    helpSection.innerHTML = html;
+  }
+
+  function handleKeyPress(keyDef) {
+    // Ensure textarea stays focused for correct cursor position
+    textarea.focus();
+
+    if (keyDef.wide === 'backspace') {
+      var pos = textarea.selectionStart;
+      if (pos > 0) {
+        if (romanBuffer.length > 0) {
+          romanBuffer = romanBuffer.slice(0, -1);
+          textarea.value = textarea.value.substring(0, pos - 1) + textarea.value.substring(pos);
+          textarea.selectionStart = textarea.selectionEnd = pos - 1;
+          if (romanBuffer.length > 0) showSuggestions();
+          else hideSuggestionsOnly();
+        } else {
+          textarea.value = textarea.value.substring(0, pos - 1) + textarea.value.substring(pos);
+          textarea.selectionStart = textarea.selectionEnd = pos - 1;
+          if (!isNewaMode) devanagariText = textarea.value;
+        }
+      }
+      return;
+    }
+
+    if (keyDef.wide === 'space') {
+      if (romanBuffer.length > 0) acceptSuggestion(selectedSuggestion);
+      var pos2 = textarea.selectionStart;
+      textarea.value = textarea.value.substring(0, pos2) + ' ' + textarea.value.substring(pos2);
+      textarea.selectionStart = textarea.selectionEnd = pos2 + 1;
+      if (!isNewaMode) devanagariText = textarea.value;
+      return;
+    }
+
+    // Feed roman key into buffer to trigger suggestions (like typing)
+    var roman = keyDef.roman || keyDef.sub;
+    if (roman) {
+      // Save cursor position before any manipulation
+      var cursorPos = textarea.selectionStart;
+      var before = textarea.value.substring(0, cursorPos);
+      var after = textarea.value.substring(cursorPos);
+
+      // Append all roman chars at once
+      romanBuffer += roman;
+      textarea.value = before + roman + after;
+      textarea.selectionStart = textarea.selectionEnd = cursorPos + roman.length;
+      showSuggestions();
+    }
+  }
+
+  keyboardToggle.addEventListener('click', function() {
+    keyboardVisible = !keyboardVisible;
+    keyboardContainer.style.display = keyboardVisible ? '' : 'none';
+    keyboardToggle.textContent = keyboardVisible ? 'Hide Keyboard' : 'Show Keyboard';
+  });
+
+  layoutToggle.addEventListener('click', function() {
+    currentLayout = (currentLayout === 'phonetic') ? 'bakamaan' : 'phonetic';
+    buildKeyboard();
+    textarea.focus();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!textarea.contains(e.target) && !suggestionBar.contains(e.target) && !keyboardContainer.contains(e.target)) {
+      if (romanBuffer.length > 0) acceptSuggestion(selectedSuggestion);
+      hideSuggestionsOnly();
+    }
+  });
+
+  buildKeyboard();
+  buildHelpSection();
+  textarea.focus();
+
+})();
+</script>
+
+</body>
+</html>
