@@ -98,19 +98,32 @@
 
   <div class="content">
     <h2>How to Use</h2>
-    <p>To add the Font Switcher Widget to your page, include these files and initialize the widget:</p>
-    
+    <p>To add the Font Switcher Widget to your page, include the CSS and JS files, then initialize:</p>
+
+    <h3>Step 1: Include the files</h3>
     <div class="code-block">
 &lt;!-- Include CSS --&gt;
-&lt;link rel="stylesheet" href="font-switcher.css"&gt;
+&lt;link rel="stylesheet" href="css/font-switcher.css"&gt;
 
-&lt;!-- Include JavaScript --&gt;
-&lt;script src="font-switcher.js"&gt;&lt;/script&gt;
+&lt;!-- Include JavaScript (before closing &lt;/body&gt;) --&gt;
+&lt;script src="js/font-switcher.js"&gt;&lt;/script&gt;
+    </div>
 
-&lt;!-- Initialize Widget --&gt;
+    <h3>Step 2: Add class to your Newa/Devanagari content</h3>
+    <div class="code-block">
+&lt;div class="newa-content"&gt;
+  &lt;h2&gt;नमस्ते&lt;/h2&gt;
+  &lt;p&gt;येँ (नेपालभाषा टाइम्स)...&lt;/p&gt;
+&lt;/div&gt;
+    </div>
+
+    <h3>Step 3: Initialize the widget</h3>
+    <div class="code-block">
 &lt;script&gt;
   FontSwitcher.init({
-    targetSelector: 'body'  // Apply to entire page
+    container: '#main-nav',           // Place widget inside this element (or null for floating top-right)
+    backgroundColor: '#2c3e50',       // Match your container background
+    targetClasses: ['newa-content']   // Apply font switching to elements with this class
   });
 &lt;/script&gt;
     </div>
@@ -119,78 +132,56 @@
   <div class="content">
     <h2>Configuration Options</h2>
     <ul>
-      <li><strong>targetSelector</strong>: CSS selector for elements to apply fonts (default: 'body')</li>
-      <li><strong>targetClasses</strong>: Array of class names to apply fonts to (e.g., ['content', 'article']) - takes precedence over targetSelector</li>
-      <li><strong>container</strong>: CSS selector or DOM element to insert widget into (null = fixed top-right)</li>
-      <li><strong>backgroundColor</strong>: Custom background color (e.g., '#2c3e50', 'transparent', 'rgba(0,0,0,0.1)')</li>
-      <li><strong>position</strong>: Widget position (default: 'fixed')</li>
-      <li><strong>autoLoad</strong>: Auto-load Google Fonts (default: true)</li>
+      <li><strong>targetClasses</strong>: Array of class names to apply fonts to (e.g., <code>['newa-content']</code>) - recommended</li>
+      <li><strong>targetSelector</strong>: CSS selector for elements to apply fonts (default: <code>'body'</code>) - used if targetClasses is not set</li>
+      <li><strong>container</strong>: CSS selector or DOM element to insert widget into (<code>null</code> = floating top-right)</li>
+      <li><strong>backgroundColor</strong>: Custom background color (e.g., <code>'#2c3e50'</code>, <code>'transparent'</code>)</li>
+      <li><strong>autoLoad</strong>: Auto-load Noto Sans Newa from Google Fonts (default: <code>true</code>)</li>
     </ul>
-    
-    <h3>Example 1: Place widget in navigation bar with custom background</h3>
+
+    <h3>Available Fonts</h3>
+    <ul>
+      <li><strong>Devanagari</strong> - Original Devanagari script (default)</li>
+      <li><strong>Ranjana</strong> - Nithya Ranjana decorative lipi</li>
+      <li><strong>Nepal Lipi "Aakha"</strong> - Nepal Aakha font (Devanagari mapped)</li>
+      <li><strong>Nepal Lipi (Noto Sans)</strong> - Noto Sans Newa Unicode (converts Devanagari text to Newa script)</li>
+    </ul>
+
+    <h3>Example: Floating widget (no container)</h3>
     <div class="code-block">
-&lt;!-- HTML --&gt;
-&lt;nav id="main-nav"&gt;
-  &lt;ul class="nav-links"&gt;
-    &lt;!-- Your navigation items --&gt;
-    &lt;!-- Font switcher will be inserted here --&gt;
-  &lt;/ul&gt;
+&lt;script&gt;
+  // Widget floats at top-right corner
+  FontSwitcher.init({
+    targetClasses: ['newa-content']
+  });
+&lt;/script&gt;
+    </div>
+
+    <h3>Example: Inside a navigation bar</h3>
+    <div class="code-block">
+&lt;nav id="main-nav" style="background: #2c3e50;"&gt;
+  &lt;h2&gt;My Site&lt;/h2&gt;
 &lt;/nav&gt;
 
-&lt;!-- JavaScript --&gt;
-&lt;script&gt;
-  FontSwitcher.init({
-    container: '.nav-links',  // Insert widget into navigation links list
-    backgroundColor: '#2c3e50',  // Match navigation background (text auto-adjusts to white)
-    targetClasses: ['content']
-  });
-&lt;/script&gt;
-    </div>
+&lt;div class="newa-content"&gt;
+  &lt;p&gt;नेपालभाषा content here...&lt;/p&gt;
+&lt;/div&gt;
 
-    <h3>Example 2: Using targetClasses</h3>
-    <div class="code-block">
+&lt;script src="js/font-switcher.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  // Apply fonts only to elements with class 'content'
   FontSwitcher.init({
-    targetClasses: ['content']
-  });
-  
-  // Or apply to multiple classes
-  FontSwitcher.init({
-    targetClasses: ['content', 'article', 'main-text']
-  });
-&lt;/script&gt;
-    </div>
-
-    <h3>Example 3: Default fixed position (top-right)</h3>
-    <div class="code-block">
-&lt;script&gt;
-  // No container specified = fixed top-right corner
-  FontSwitcher.init({
-    targetClasses: ['content']
-  });
-&lt;/script&gt;
-    </div>
-
-    <h3>Example 4: Custom background colors</h3>
-    <div class="code-block">
-&lt;script&gt;
-  // Dark background (text auto-adjusts to white)
-  FontSwitcher.init({
+    container: '#main-nav',
     backgroundColor: '#2c3e50',
-    targetClasses: ['content']
+    targetClasses: ['newa-content']
   });
-  
-  // Transparent background
+&lt;/script&gt;
+    </div>
+
+    <h3>Example: Multiple target classes</h3>
+    <div class="code-block">
+&lt;script&gt;
   FontSwitcher.init({
-    backgroundColor: 'transparent',
-    targetClasses: ['content']
-  });
-  
-  // Semi-transparent overlay
-  FontSwitcher.init({
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    targetClasses: ['content']
+    targetClasses: ['newa-content', 'article', 'main-text']
   });
 &lt;/script&gt;
     </div>

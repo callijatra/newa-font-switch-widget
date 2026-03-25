@@ -18,10 +18,7 @@
   font-weight: 100;
   font-display: swap;
 }
-@font-face{
-font-family: 'Noto Sans Newa';
-src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap');
-}
+/* Noto Sans Newa is loaded via Google Fonts link in JavaScript */
 
 /* Widget container - base styles */
 .font-switcher-container {
@@ -62,32 +59,98 @@ src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap')
   white-space: nowrap;
 }
 
-/* Widget select dropdown */
-.font-switcher-select {
-  padding: 6px 10px;
+/* Custom dropdown */
+.font-switcher-dropdown {
+  position: relative;
+  min-width: 260px;
+}
+
+.font-switcher-selected {
+  padding: 6px 28px 6px 10px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
   background: #ffffff;
   color: #333;
   font-size: 14px;
-  font-family: inherit;
   cursor: pointer;
-  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: border-color 0.2s, box-shadow 0.2s;
-  min-width: 140px;
 }
 
-.font-switcher-select:hover {
+.font-switcher-selected::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-top-color: #666;
+}
+
+.font-switcher-open .font-switcher-selected::after {
+  border-top-color: transparent;
+  border-bottom-color: #666;
+  transform: translateY(-80%);
+}
+
+.font-switcher-selected:hover {
   border-color: #999;
 }
 
-.font-switcher-select:focus {
+.font-switcher-dropdown:focus .font-switcher-selected {
   border-color: #4a90e2;
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
-.font-switcher-select:active {
-  border-color: #4a90e2;
+.font-switcher-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10001;
+  overflow: hidden;
+}
+
+.font-switcher-open .font-switcher-options {
+  display: block;
+}
+
+.font-switcher-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  gap: 12px;
+}
+
+.font-switcher-option:hover {
+  background: #f0f4ff;
+}
+
+.font-switcher-option-active {
+  background: #e8f0fe;
+}
+
+.font-switcher-option-name {
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.font-switcher-option-preview {
+  font-size: 16px;
+  color: #555;
+  white-space: nowrap;
 }
 
 /* Font utility classes (for manual application if needed) */
@@ -97,6 +160,10 @@ src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap')
 
 .font-switcher-newa {
   font-family: 'NewaAakha', sans-serif !important;
+}
+
+.font-switcher-notoNewa {
+  font-family: 'Noto Sans Newa', sans-serif !important;
 }
 
 /* Responsive adjustments */
@@ -111,9 +178,12 @@ src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap')
     font-size: 13px;
   }
 
-  .font-switcher-select {
-    min-width: 120px;
-    padding: 5px 8px;
+  .font-switcher-dropdown {
+    min-width: 200px;
+  }
+
+  .font-switcher-selected {
+    padding: 5px 24px 5px 8px;
     font-size: 13px;
   }
 }
@@ -125,7 +195,7 @@ src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap')
     border-color: #000;
   }
 
-  .font-switcher-select {
+  .font-switcher-selected {
     border-width: 2px;
   }
 }
@@ -142,19 +212,39 @@ src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+Newa&display=swap')
     color: #e0e0e0;
   }
 
-  .font-switcher-select {
+  .font-switcher-selected {
     background: #2d2d2d;
     border-color: #555;
     color: #e0e0e0;
   }
 
-  .font-switcher-select:hover {
+  .font-switcher-selected:hover {
     border-color: #777;
   }
 
-  .font-switcher-select:focus {
-    border-color: #5a9de2;
-    box-shadow: 0 0 0 3px rgba(90, 157, 226, 0.2);
+  .font-switcher-selected::after {
+    border-top-color: #aaa;
+  }
+
+  .font-switcher-options {
+    background: #2d2d2d;
+    border-color: #555;
+  }
+
+  .font-switcher-option:hover {
+    background: #3a3a3a;
+  }
+
+  .font-switcher-option-active {
+    background: #404040;
+  }
+
+  .font-switcher-option-name {
+    color: #e0e0e0;
+  }
+
+  .font-switcher-option-preview {
+    color: #ccc;
   }
 }
 
