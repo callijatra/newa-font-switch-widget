@@ -1673,14 +1673,15 @@
         }
         jsConfig = jsConfig.replace(/,\n$/, '\n') + "});";
 
+        const tagScriptClose = '<' + '/script>';
         let htmlSnippet = `<!-- Include Font Switcher CSS -->\n`;
         htmlSnippet += `<link rel="stylesheet" href="css/font-switcher.css">\n\n`;
         htmlSnippet += `<!-- Include Font Switcher JS -->\n`;
-        htmlSnippet += `<script src="js/font-switcher.js"><\/script>\n\n`;
+        htmlSnippet += `<script src="js/font-switcher.js"><\/script>` + `\n\n`;
         htmlSnippet += `<!-- Initialize Widget -->\n`;
-        htmlSnippet += `<script>\n${jsConfig}\n<\/script>`;
+        htmlSnippet += `<script>\n${jsConfig}\n` + tagScriptClose;
 
-        codeOutput.innerHTML = highlightSnippet(htmlSnippet);
+        codeOutput.textContent = htmlSnippet;
         codeOutput.dataset.rawCode = htmlSnippet;
 
         // Re-initialize live widget on the page dynamically
