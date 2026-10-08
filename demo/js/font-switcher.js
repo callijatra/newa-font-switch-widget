@@ -139,6 +139,10 @@
       targetSelector: 'body',
       targetClasses: null,
       container: null,
+      labelText: 'Font:',
+      showBorder: true,
+      borderColor: null,
+      darkBorderColor: null,
       backgroundColor: null,
       darkBackgroundColor: null,
       position: 'top-right',
@@ -291,11 +295,20 @@
         }
       }
 
-      const label = document.createElement('label');
-      label.htmlFor = 'font-switcher-select';
-      label.className = 'font-switcher-label';
-      label.textContent = 'Font:';
-      label.setAttribute('aria-label', 'Select font');
+      // Label text customization or removal
+      let label = null;
+      const labelText = (this.config.labelText !== undefined && this.config.labelText !== null) 
+        ? String(this.config.labelText) 
+        : 'Font:';
+
+      if (labelText.trim() !== '' && this.config.labelText !== false) {
+        label = document.createElement('label');
+        label.htmlFor = 'font-switcher-select';
+        label.className = 'font-switcher-label';
+        label.textContent = labelText;
+        label.setAttribute('aria-label', labelText);
+        container.appendChild(label);
+      }
 
       if (!this.fonts.notoNewa.preview) {
         this.fonts.notoNewa.preview = DevanagariToNewa.convert('\u0928\u092E\u0938\u094D\u0924\u0947');
@@ -392,7 +405,6 @@
       dropdown.appendChild(selected);
       dropdown.appendChild(optionsList);
 
-      container.appendChild(label);
       container.appendChild(dropdown);
 
       if (targetContainer) {
@@ -413,6 +425,30 @@
       const selected = container.querySelector('.font-switcher-selected');
       const isDarkTheme = document.documentElement.classList.contains('dark');
 
+      // 1. Handle Borders
+      let effectiveBorder = null;
+      if (this.config.showBorder === false) {
+        effectiveBorder = 'transparent';
+      } else if (isDarkTheme && this.config.darkBorderColor) {
+        effectiveBorder = this.config.darkBorderColor;
+      } else if (this.config.borderColor) {
+        effectiveBorder = this.config.borderColor;
+      }
+
+      if (effectiveBorder) {
+        if (effectiveBorder === 'transparent' || effectiveBorder === 'none') {
+          container.style.border = 'none';
+          if (selected) selected.style.border = 'none';
+        } else {
+          container.style.border = '1px solid ' + effectiveBorder;
+          if (selected) selected.style.borderColor = effectiveBorder;
+        }
+      } else {
+        container.style.border = '';
+        if (selected) selected.style.borderColor = '';
+      }
+
+      // 2. Handle Backgrounds & Contrast
       let effectiveBg = null;
       if (isDarkTheme && this.config.darkBackgroundColor) {
         effectiveBg = this.config.darkBackgroundColor;
@@ -429,7 +465,6 @@
           if (selected) {
             selected.style.backgroundColor = effectiveBg;
             selected.style.color = '#ffffff';
-            selected.style.borderColor = 'rgba(255, 255, 255, 0.3)';
           }
         } else {
           container.style.color = '#1f2937';
@@ -437,7 +472,6 @@
           if (selected) {
             selected.style.backgroundColor = effectiveBg;
             selected.style.color = '#1f2937';
-            selected.style.borderColor = 'rgba(0, 0, 0, 0.15)';
           }
         }
       } else {
@@ -447,7 +481,6 @@
         if (selected) {
           selected.style.backgroundColor = '';
           selected.style.color = '';
-          selected.style.borderColor = '';
         }
       }
     },

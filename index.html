@@ -591,6 +591,20 @@
     .form-control:focus {
       border-color: var(--brand);
     }
+    select.form-control {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 2.75rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      background-size: 1.15rem;
+      cursor: pointer;
+    }
+    html.dark select.form-control {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    }
 
     .color-picker-wrapper {
       display: flex;
@@ -1050,6 +1064,44 @@
         </div>
 
         <div class="form-group">
+          <label for="cfg-label-text">Label Text</label>
+          <div style="display:flex;flex-direction:column;gap:0.4rem;">
+            <input type="text" id="cfg-label-text" class="form-control" value="Font:" placeholder="Font:, Script:, or leave empty">
+            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text-subtle);cursor:pointer;">
+              <input type="checkbox" id="cfg-show-label" checked>
+              <span>Show label text before dropdown (uncheck to show dropdown only)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Border Configuration</label>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;">
+            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" id="cfg-show-border" checked>
+              <span>Show border around widget</span>
+            </label>
+            
+            <div id="border-colors-group" style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Light Mode Border Color:</span>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="cfg-border-picker" class="color-picker-swatch" value="#e5e7eb">
+                  <input type="text" id="cfg-border" class="form-control" style="flex:1;" value="#e5e7eb" placeholder="#e5e7eb, transparent">
+                </div>
+              </div>
+              <div>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Dark Mode Border Color:</span>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="cfg-dark-border-picker" class="color-picker-swatch" value="#1f2937">
+                  <input type="text" id="cfg-dark-border" class="form-control" style="flex:1;" value="#1f2937" placeholder="#1f2937, transparent">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="cfg-bg">Light Mode Background Color</label>
           <div class="color-picker-wrapper">
             <input type="color" id="cfg-bg-picker" class="color-picker-swatch" value="#ffffff">
@@ -1127,6 +1179,30 @@
             <td>String</td>
             <td><code>'top-right'</code></td>
             <td>Floating position when <code>container</code> is not set. Options: <code>'top-right'</code> or <code>'bottom-right'</code>.</td>
+          </tr>
+          <tr>
+            <td><code>labelText</code></td>
+            <td>String | Boolean</td>
+            <td><code>'Font:'</code></td>
+            <td>Text label shown before dropdown. Set to <code>''</code> or <code>false</code> to hide label and show dropdown only.</td>
+          </tr>
+          <tr>
+            <td><code>showBorder</code></td>
+            <td>Boolean</td>
+            <td><code>true</code></td>
+            <td>Set to <code>false</code> to remove the border around the widget and dropdown.</td>
+          </tr>
+          <tr>
+            <td><code>borderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom border color hex/rgb for light mode.</td>
+          </tr>
+          <tr>
+            <td><code>darkBorderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom border color hex/rgb when dark mode (<code>.dark</code>) is active.</td>
           </tr>
           <tr>
             <td><code>backgroundColor</code></td>
@@ -1319,6 +1395,14 @@
       const cfgPlacement = document.getElementById('cfg-placement');
       const cfgContainerGroup = document.getElementById('cfg-container-group');
       const cfgContainerId = document.getElementById('cfg-container-id');
+      const cfgLabelText = document.getElementById('cfg-label-text');
+      const cfgShowLabel = document.getElementById('cfg-show-label');
+      const cfgShowBorder = document.getElementById('cfg-show-border');
+      const borderColorsGroup = document.getElementById('border-colors-group');
+      const cfgBorder = document.getElementById('cfg-border');
+      const cfgBorderPicker = document.getElementById('cfg-border-picker');
+      const cfgDarkBorder = document.getElementById('cfg-dark-border');
+      const cfgDarkBorderPicker = document.getElementById('cfg-dark-border-picker');
       const cfgBg = document.getElementById('cfg-bg');
       const cfgBgPicker = document.getElementById('cfg-bg-picker');
       const cfgDarkBg = document.getElementById('cfg-dark-bg');
@@ -1329,12 +1413,10 @@
       const btnCopyCode = document.getElementById('btn-copy-code');
 
       function syncColorPickers() {
-        if (/^#[0-9A-F]{6}$/i.test(cfgBg.value)) {
-          cfgBgPicker.value = cfgBg.value;
-        }
-        if (/^#[0-9A-F]{6}$/i.test(cfgDarkBg.value)) {
-          cfgDarkBgPicker.value = cfgDarkBg.value;
-        }
+        if (/^#[0-9A-F]{6}$/i.test(cfgBg.value)) cfgBgPicker.value = cfgBg.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgDarkBg.value)) cfgDarkBgPicker.value = cfgDarkBg.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgBorder.value)) cfgBorderPicker.value = cfgBorder.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgDarkBorder.value)) cfgDarkBorderPicker.value = cfgDarkBorder.value;
       }
 
       cfgBgPicker.addEventListener('input', function() {
@@ -1355,6 +1437,35 @@
         updateWidgetAndSnippet();
       });
 
+      cfgBorderPicker.addEventListener('input', function() {
+        cfgBorder.value = cfgBorderPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgBorder.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgDarkBorderPicker.addEventListener('input', function() {
+        cfgDarkBorder.value = cfgDarkBorderPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgDarkBorder.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgShowBorder.addEventListener('change', function() {
+        borderColorsGroup.style.display = cfgShowBorder.checked ? 'flex' : 'none';
+        updateWidgetAndSnippet();
+      });
+
+      cfgShowLabel.addEventListener('change', function() {
+        cfgLabelText.disabled = !cfgShowLabel.checked;
+        updateWidgetAndSnippet();
+      });
+      cfgLabelText.addEventListener('input', updateWidgetAndSnippet);
+
       cfgPlacement.addEventListener('change', function() {
         if (cfgPlacement.value === 'custom') {
           cfgContainerGroup.style.display = 'block';
@@ -1369,6 +1480,11 @@
         const targetCls = cfgTarget.value.split(',').map(s => s.trim()).filter(Boolean);
         const bg = cfgBg.value.trim();
         const darkBg = cfgDarkBg.value.trim();
+        const border = cfgBorder.value.trim();
+        const darkBorder = cfgDarkBorder.value.trim();
+        const showBorder = cfgShowBorder.checked;
+        const showLabel = cfgShowLabel.checked;
+        const labelText = cfgLabelText.value;
         const autoload = cfgAutoload.checked;
 
         let containerOpt = null;
@@ -1397,6 +1513,17 @@
         } else if (positionOpt !== 'top-right') {
           jsConfig += `  position: '${positionOpt}',\n`;
         }
+        if (!showLabel) {
+          jsConfig += `  labelText: '',\n`;
+        } else if (labelText !== 'Font:') {
+          jsConfig += `  labelText: '${labelText}',\n`;
+        }
+        if (!showBorder) {
+          jsConfig += `  showBorder: false,\n`;
+        } else {
+          if (border && border !== '#e5e7eb') jsConfig += `  borderColor: '${border}',\n`;
+          if (darkBorder && darkBorder !== '#1f2937') jsConfig += `  darkBorderColor: '${darkBorder}',\n`;
+        }
         if (bg) {
           jsConfig += `  backgroundColor: '${bg}',\n`;
         }
@@ -1422,8 +1549,14 @@
           targetClasses: targetCls.length > 0 ? targetCls : ['newa-content'],
           container: containerOpt,
           position: positionOpt,
+          labelText: showLabel ? labelText : '',
+          showBorder: showBorder,
           autoLoad: autoload
         };
+        if (showBorder) {
+          if (border) widgetOptions.borderColor = border;
+          if (darkBorder) widgetOptions.darkBorderColor = darkBorder;
+        }
         if (bg) widgetOptions.backgroundColor = bg;
         if (darkBg) widgetOptions.darkBackgroundColor = darkBg;
 
