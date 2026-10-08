@@ -19,7 +19,7 @@
 /* Nepal Aakha font */
 @font-face {
   font-family: 'NewaAakha';
-  src: url('../font/NEPAL%20AAKHA.woff2') format('woff2'),
+  src: url('../demo/font/NEPAL%20AAKHA.woff2') format('woff2'),
        url('https://cdn.jsdelivr.net/gh/dibeshpradhan/newa-font-switch-widget@main/demo/font/NEPAL%20AAKHA.woff2') format('woff2'),
        url('https://cdn.jsdelivr.net/gh/dibeshpradhan/newa-font-switch-widget@main/demo/font/NEPAL%20AAKHA.woff') format('woff');
   font-weight: 400;

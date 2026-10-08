@@ -3,169 +3,602 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Font Switcher Widget - Example</title>
-  
-  <!-- Include the font switcher CSS -->
+  <title>Font Switcher Widget — Interactive Demo — Callijatra</title>
+  <meta name="description" content="Interactive live demo of the Font Switcher Widget by Callijatra Foundation for switching between Devanagari, Nithya Ranjana, Nepal Lipi Aakha, and Noto Sans Newa.">
+
+  <link rel="icon" href="images/callijatra_logo.svg" type="image/svg+xml">
+
+  <!-- Include Font Switcher Widget CSS -->
   <link rel="stylesheet" href="css/font-switcher.css">
-  
+
+  <!-- Prevent dark mode flash -->
+  <script>
+    (function () {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
   <style>
-    /* Your existing page styles */
+    .hidden {
+      display: none !important;
+    }
+
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      
+      --brand: #c0392b;
+      --brand-hover: #a93226;
+      --brand-subtle: #fbeae9;
+      --brand-subtle-border: #f5c6cb;
+      
+      --bg-main: #ffffff;
+      --bg-card: #f9fafb;
+      --bg-nav: #2c3e50;
+      --border-color: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --text-subtle: #6b7280;
+    }
+
+    html.dark {
+      --brand-subtle: #3b1212;
+      --brand-subtle-border: #7f1d1d;
+      
+      --bg-main: #030712;
+      --bg-card: #111827;
+      --bg-nav: #0f172a;
+      --border-color: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-subtle: #6b7280;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-main);
       line-height: 1.6;
-      color: #333;
-      background: #fff;
+      transition: background-color 0.2s, color 0.2s;
     }
-    
-    /* Navigation bar example */
-    .nav-bar {
-      background: #2c3e50;
-      color: white;
-      padding: 1em 2em;
-      margin: -40px -20px 2em -20px;
+
+    /* Navbar matching Callijatra Foundation */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    html.dark .navbar {
+      background-color: rgba(3, 7, 18, 0.95);
+    }
+
+    .nav-container {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 4.25rem;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
-    
-    .nav-bar h2 {
-      margin: 0;
-      color: white;
-    }
-    
-    .nav-links {
+
+    .brand-logo {
       display: flex;
-      gap: 1.5em;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-logo img {
+      height: 2.25rem;
+      width: auto;
+    }
+    html.dark .brand-logo img {
+      filter: brightness(0) invert(1);
+    }
+
+    .brand-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: var(--brand-subtle);
+      color: var(--brand);
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      border: 1px solid var(--brand-subtle-border);
+    }
+
+    .nav-links-desktop {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
       list-style: none;
+    }
+    @media (max-width: 868px) {
+      .nav-links-desktop { display: none; }
+    }
+
+    .nav-link {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s, background-color 0.15s;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+      background-color: var(--bg-card);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-btn:hover {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    .hamburger-btn {
+      display: none;
+    }
+    @media (max-width: 868px) {
+      .hamburger-btn { display: flex; }
+    }
+
+    /* Mobile Drawer */
+    .mobile-menu {
+      display: none;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      padding: 0.75rem 1.25rem 1.25rem;
+    }
+    .mobile-menu.open {
+      display: block;
+      animation: menuSlideDown 0.2s ease-out;
+    }
+    @keyframes menuSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .mobile-nav-link {
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .mobile-nav-link:hover, .mobile-nav-link.active {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    /* Container Demo Banner */
+    .nav-custom-bar {
+      background-color: var(--bg-nav);
+      color: #ffffff;
+      padding: 1.25rem 1.5rem;
+      border-radius: 0.75rem;
+      margin: 2rem auto;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-custom-bar h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
       margin: 0;
-      padding: 0;
     }
-    
-    h1 {
-      color: #2c3e50;
-      margin-top: 2em;
+
+    /* Page Content */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem 4rem;
     }
-    
-    .content {
-      background: #f8f9fa;
-      padding: 2em;
-      border-radius: 8px;
-      margin: 2em 0;
-      font-size: 1em;
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
     }
-    
+
+    .demo-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+    @media (max-width: 640px) {
+      .demo-title { font-size: 1.75rem; }
+    }
+
+    .demo-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 750px;
+      margin: 0 auto 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .demo-desc { font-size: 0.95rem; }
+    }
+
+    /* Interactive Toolbar */
+    .interactive-bar {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.4rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .btn-sm.active {
+      background-color: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+    }
+
+    /* Content Cards */
+    .content-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03);
+    }
+    @media (max-width: 640px) {
+      .content-box { padding: 1.25rem; }
+    }
+
+    .content-box h2 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+    @media (max-width: 640px) {
+      .content-box h2 { font-size: 1.3rem; }
+    }
+
+    .content-box p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 640px) {
+      .content-box p { font-size: 0.95rem; }
+    }
+    .content-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Side-by-Side Comparison Grid */
+    .comparison-grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .comparison-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      padding: 1.5rem;
+    }
+    .comparison-card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--brand);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
     .code-block {
-      background: #2d2d2d;
-      color: #f8f8f2;
-      padding: 1em;
-      border-radius: 4px;
+      background-color: #111827;
+      color: #f9fafb;
+      padding: 1.25rem;
+      border-radius: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
       overflow-x: auto;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9em;
+      margin: 1rem 0;
+    }
+
+    /* Footer matching Callijatra Foundation */
+    .footer {
+      background-color: #111827;
+      color: #9ca3af;
+      padding: 3.5rem 1.25rem 2rem;
+      border-top: 1px solid #1f2937;
+    }
+    html.dark .footer {
+      background-color: #030712;
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 768px) {
+      .footer-container { grid-template-columns: 1fr; }
+    }
+
+    .footer-brand img {
+      height: 2.5rem;
+      filter: brightness(0) invert(1);
+      margin-bottom: 1rem;
+    }
+    .footer-brand p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #9ca3af;
+      max-width: 320px;
+    }
+
+    .footer-social-title {
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+    }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .social-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .social-item:hover {
+      color: #ffffff;
+    }
+
+    .social-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.65rem;
+      background-color: #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      shrink: 0;
+      transition: all 0.2s;
+    }
+    .social-icon svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      fill: #9ca3af;
+      transition: fill 0.2s;
+    }
+    .social-item:hover .social-icon svg {
+      fill: #ffffff;
+    }
+
+    .social-item.instagram:hover .social-icon { background: linear-gradient(to bottom right, #833ab4, #fd1d1d, #fcb045); }
+    .social-item.facebook:hover .social-icon { background-color: #1877F2; }
+    .social-item.youtube:hover .social-icon { background-color: #FF0000; }
+    .social-item.github:hover .social-icon { background-color: #374151; }
+    .social-item.email:hover .social-icon, .social-item.mail:hover .social-icon { background-color: #EA4335; }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 1.75rem;
+      border-top: 1px solid #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #6b7280;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
   </style>
 </head>
 <body>
-  <!-- Example: Navigation bar with font switcher -->
-  <nav class="nav-bar" id="main-nav">
-    <h2>CALLIJATRA</h2>
-    <ul class="nav-links">
-      <li><a href="index.html" style="color: white;">Font Switcher</a></li>
-      <li><a href="transliterate.html" style="color: white;">Transliterate</a></li>
-      <!-- Font switcher will be inserted here -->
-    </ul>
-  </nav>
 
-  <header>
-    <h1>Font Switcher Widget Example - Try it by switching the font</h1>
-    <p>This page demonstrates how to use the Font Switcher Widget. The widget is placed in the navigation bar above or anywhere in the page specifying <em>id</em>, but you can also use the default fixed top-right position as a floating widget.</p>
-    <div id="header-content"></div>
-</header>
+  <!-- STICKY NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="images/callijatra_logo.svg" alt="Callijatra Foundation Logo">
+        <span class="brand-badge">Demo</span>
+      </a>
 
-  <div class="content newa-content">
-    <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
-    <p>येँ (नेपालभाषा टाइम्स)- विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट म्हिगः छगू ज्याझ्वःया दथुइ येँ महानगरपालिकाया उपमेयर सुनिता डंगोलं सार्वजनिक यानादीगु खः ।</p>
-    <p>ज्याझ्वलय् नेवाः न्ह्यलुवा मल्ल के. सुन्दर, क्यालिजात्रा फाउन्डेसनया प्रमुख लिसें लिपि विशेषज्ञ आनन्दकुमार महर्जन, नेपालभाषा केन्द्रीय विभागया प्रमुख सह–प्रा.डा. राजनलाल जोशी, नेपाल लिपि गुथिया नायः अनिल स्थापित आदिपिं पाहाँ कथं उपस्थिति दुगु खः ।</p>
-    <p>थौंया आधुनिक युगय् लिपिया संरक्षण व प्रवर्धन यायेत डिजिटल मार्केटय् वनेमाःगु खँयात महसुस यासें क्यालिजात्रा फाउण्डेसन व भारतया नांजाःगु फन्ट डिजाइन कम्पनी ‘एक टाइप’ जानाः ‘नित्या रञ्जना’ नामं थ्व फन्ट विकास याःगु खः । थ्व विकास यायेगु लागिं नेपाःपाखें लिपि विशेषज्ञ आनन्दकुमार महर्जनया सल्लाह कथं तथागत विश्वास, सारंग कुलकर्णी व नूपुर दात्यें ज्या यानादीगु खः ।</p>
-    <p>रञ्जना लिपिया थ्व फन्ट अनलाइन, पत्रपत्रिका, सफू आदि न्ह्यागु ज्याय् नं छ्यले फइगु खँ धाःगु दु । थुकियात अनलाइनपाखें डाउनलोड यानाः काये फइ । थ्व फन्ट विश्वन्यंकं निःशुल्क उपलब्ध जुइ । नेपालय् आः तक उपलब्ध मेमेगु रञ्जना लिपिया फन्ट स्वयां थ्व फन्ट सुन्दर जक मखु अःपुक च्वये फइगु व छुं गल्ती नं पिहां मवइगु कथं विकास यानातःगु खँ धाःगु दु ।</p>
-    <p>फन्टया सार्वजनिक ज्याझ्वः लिपा लिपियात कयाः सहलह ज्याझ्वः नं जूगु खः । उगु ज्याझ्वलय् न्ववासें मनपाया उपमेयर सुनिता डंगोलं आखः दयेकेमाःगु महत्वपूर्ण खँ खः, आः आखः दयेकेधुंकूगु जुयाः थ्वयात न्ह्याथासं अःपुक छ्यले फइ धयादिल । वय्कलं धयादिल, ‘झीके थुलि अःपुक लिपि आखः उपलब्ध जुइधुंकल, आः रञ्जना लिपि छ्यलेत सुं नं ग्यायेमाःगु मन्त । आः सुनां नं गल्ती जुइक लिपि छ्यले माली मखुत ।’</p>
-    <p>ज्याझ्वलय् उगु फन्ट छ्यलाः च्वयातःगु थीथी धापू, वर्णमाला, डिजाइन आदि नं ब्वयातःगु खः । सार्वजनिकरण ज्याझ्वलय् आपालं लिपि व भाषा विशेषज्ञ, क्यालिग्राफर, टाइपोग्राफर, डिजाइन प्रोफेसर, फन्ट डिजाइनर, आइटी विज्ञतय्गु नं उपस्थिति दुगु खः ।</p>
-</div>
+      <!-- Desktop links -->
+      <ul class="nav-links-desktop">
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="index.html" class="nav-link active">Live Demo</a></li>
+        <li><a href="transliterate.html" class="nav-link">Keyboard</a></li>
+        <li><a href="https://github.com/callijatra/newa-font-switch-widget" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub</a></li>
+      </ul>
 
-  <div class="content">
-    <h2>How to Use</h2>
-    <p>To add the Font Switcher Widget to your page, include the CSS and JS files, then initialize:</p>
+      <div class="nav-right">
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+          <svg id="icon-sun" class="hidden" style="width:1.2rem;height:1.2rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-9H21M3 12H2m15.36-6.36-.71.71M6.34 17.66l-.71.71M17.66 17.66l-.71-.71M6.34 6.34l-.71-.71M12 5a7 7 0 1 0 0 14A7 7 0 0 0 12 5z"/>
+          </svg>
+          <svg id="icon-moon" style="width:1.2rem;height:1.2rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
 
-    <h3>Step 1: Include the files</h3>
-    <div class="code-block">
-&lt;!-- Include CSS --&gt;
-&lt;link rel="stylesheet" href="css/font-switcher.css"&gt;
-
-&lt;!-- Include JavaScript (before closing &lt;/body&gt;) --&gt;
-&lt;script src="js/font-switcher.js"&gt;&lt;/script&gt;
+        <!-- Mobile Hamburger Button -->
+        <button id="hamburger-btn" class="icon-btn hamburger-btn" aria-label="Toggle Navigation" aria-expanded="false">
+          <svg id="icon-hamburger" style="width:1.35rem;height:1.35rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="icon-close" class="hidden" style="width:1.35rem;height:1.35rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <h3>Step 2: Add class to your Newa/Devanagari content</h3>
-    <div class="code-block">
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+      <ul class="mobile-menu-list">
+        <li><a href="../index.html" class="mobile-nav-link">Repo Homepage</a></li>
+        <li><a href="index.html" class="mobile-nav-link active">Live Article Demo</a></li>
+        <li><a href="transliterate.html" class="mobile-nav-link">Transliteration Keyboard</a></li>
+        <li><a href="https://github.com/callijatra/newa-font-switch-widget" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">GitHub Repository ↗</a></li>
+        <li><a href="https://callijatra.github.io" target="_blank" rel="noopener noreferrer" class="mobile-nav-link">Callijatra Foundation ↗</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- NAVIGATION BAR DEMO (CONTAINER PLACEMENT) -->
+  <div class="nav-custom-bar" id="main-nav">
+    <h2>CALLIJATRA DEMO ARTICLE</h2>
+    <!-- FontSwitcher widget will be dynamically inserted here -->
+  </div>
+
+  <main class="container">
+    <div class="demo-header">
+      <h1 class="demo-title">Interactive Font Switcher Demo</h1>
+      <p class="demo-desc">Select any font from the navigation bar widget above or click the quick controls below to observe live font switching on the article contents.</p>
+    </div>
+
+    <!-- INTERACTIVE TOOLBAR CONTROLS -->
+    <div class="interactive-bar">
+      <div>
+        <span style="font-size:0.85rem;font-weight:700;margin-right:0.5rem;color:var(--text-muted);">Programmatic Font Switch:</span>
+        <div class="btn-group">
+          <button class="btn-sm active" id="btn-font-deva">Devanagari</button>
+          <button class="btn-sm" id="btn-font-ranj">Ranjana</button>
+          <button class="btn-sm" id="btn-font-aakha">Nepal Aakha</button>
+          <button class="btn-sm" id="btn-font-noto">Noto Sans Newa</button>
+        </div>
+      </div>
+
+      <div>
+        <span style="font-size:0.85rem;font-weight:700;margin-right:0.5rem;color:var(--text-muted);">View Mode:</span>
+        <div class="btn-group">
+          <button class="btn-sm active" id="btn-mode-article">Article View</button>
+          <button class="btn-sm" id="btn-mode-compare">Compare All 4 Fonts</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICLE VIEW MODE -->
+    <div id="article-view-container">
+      <article class="content-box newa-content">
+        <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
+        <p>येँ (नेपालभाषा टाइम्स) — विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट म्हिगः छगू ज्याझ्वःया दथुइ येँ महानगरपालिकाया उपमेयर सुनिता डंगोलं सार्वजनिक यानादीगु खः ।</p>
+        <p>ज्याझ्वलय् नेवाः न्ह्यलुवा मल्ल के. सुन्दर, क्यालिजात्रा फाउन्डेसनया प्रमुख लिसें लिपि विशेषज्ञ आनन्दकुमार महर्जन, नेपालभाषा केन्द्रीय विभागया प्रमुख सह–प्रा.डा. राजनलाल जोशी, नेपाल लिपि गुथिया नायः अनिल स्थापित आदिपिं पाहाँ कथं उपस्थिति दुगु खः ।</p>
+        <p>थौंया आधुनिक युगय् लिपिया संरक्षण व प्रवर्धन यायेत डिजिटल मार्केटय् वनेमाःगु खँयात महसुस यासें क्यालिजात्रा फाउण्डेसन व भारतया नांजाःगु फन्ट डिजाइन कम्पनी ‘एक टाइप’ जानाः ‘नित्या रञ्जना’ नामं थ्व फन्ट विकास याःगु खः । थ्व विकास यायेगु लागिं नेपाःपाखें लिपि विशेषज्ञ आनन्दकुमार महर्जनया सल्लाह कथं तथागत विश्वास, सारंग कुलकर्णी व नूपुर दात्यें ज्या यानादीगु खः ।</p>
+        <p>रञ्जना लिपिया थ्व फन्ट अनलाइन, पत्रपत्रिका, सफू आदि न्ह्यागु ज्याय् नं छ्यले फइगु खँ धाःगु दु । थुकियात अनलाइनपाखें डाउनलोड यानाः काये फइ । थ्व फन्ट विश्वन्यंकं निःशुल्क उपलब्ध जुइ । नेपालय् आः तक उपलब्ध मेमेगु रञ्जना लिपिया फन्ट स्वयां थ्व फन्ट सुन्दर जक मखु अःपुक च्वये फइगु व छुं गल्ती नं पिहां मवइगु कथं विकास यानातःगु खँ धाःगु दु ।</p>
+      </article>
+
+      <article class="content-box newa-content">
+        <h2>न्हूम्ह कुमारी आर्यतारा शाक्य</h2>
+        <p>येँ (नेपालभाषा टाइम्स) — येँया न्हूम्ह लाय्कू कुमारी कथं मय्जु आर्यतारा शाक्ययात ल्यःगु दु । कुमारी ल्ययेगु परम्परागत पद्धति कथं वय्कःयात न्हूम्ह कुमारी कथं ल्ययेगु ज्या जूगु खः । वय्कः येँया इतुम्बहाः अर्थात भाष्करदेव संस्कारित केशचन्द्रकृत पारावर्त महाविहारया शाक्य कुलपुत्री खः ।</p>
+        <p>वय्कः उगु विहारया भाजु अनन्त शाक्य व मय्जु प्रतिष्ठा शाक्यया म्ह्याय्मय्जु खः । वय्कःया बाज्या अमृतरत्न शाक्य खःसा अजि शिलु शाक्य खः । वय्कःया बाज्या अमृतरत्न शाक्य नेपालभाषाया नांजाःम्ह म्ये च्वमि खः ।</p>
+      </article>
+
+      <!-- REGULAR NON-TARGET CONTENT -->
+      <div class="content-box">
+        <h2 style="font-size:1.25rem;">Implementation Guide</h2>
+        <p>Notice how paragraphs with the <code>newa-content</code> class update instantly when font selection changes, while regular documentation text remains in standard sans-serif.</p>
+
+        <div class="code-block">&lt;!-- Target content elements with newa-content class --&gt;
 &lt;div class="newa-content"&gt;
   &lt;h2&gt;नमस्ते&lt;/h2&gt;
   &lt;p&gt;येँ (नेपालभाषा टाइम्स)...&lt;/p&gt;
 &lt;/div&gt;
-    </div>
 
-    <h3>Step 3: Initialize the widget</h3>
-    <div class="code-block">
-&lt;script&gt;
-  FontSwitcher.init({
-    container: '#main-nav',           // Place widget inside this element (or null for floating top-right)
-    backgroundColor: '#2c3e50',       // Match your container background
-    targetClasses: ['newa-content']   // Apply font switching to elements with this class
-  });
-&lt;/script&gt;
-    </div>
-  </div>
-
-  <div class="content">
-    <h2>Configuration Options</h2>
-    <ul>
-      <li><strong>targetClasses</strong>: Array of class names to apply fonts to (e.g., <code>['newa-content']</code>) - recommended</li>
-      <li><strong>targetSelector</strong>: CSS selector for elements to apply fonts (default: <code>'body'</code>) - used if targetClasses is not set</li>
-      <li><strong>container</strong>: CSS selector or DOM element to insert widget into (<code>null</code> = floating top-right)</li>
-      <li><strong>backgroundColor</strong>: Custom background color (e.g., <code>'#2c3e50'</code>, <code>'transparent'</code>)</li>
-      <li><strong>autoLoad</strong>: Auto-load Noto Sans Newa from Google Fonts (default: <code>true</code>)</li>
-    </ul>
-
-    <h3>Available Fonts</h3>
-    <ul>
-      <li><strong>Devanagari</strong> - Original Devanagari script (default)</li>
-      <li><strong>Ranjana</strong> - Nithya Ranjana decorative lipi</li>
-      <li><strong>Nepal Lipi "Aakha"</strong> - Nepal Aakha font (Devanagari mapped)</li>
-      <li><strong>Nepal Lipi (Noto Sans)</strong> - Noto Sans Newa Unicode (converts Devanagari text to Newa script)</li>
-    </ul>
-
-    <h3>Example: Floating widget (no container)</h3>
-    <div class="code-block">
-&lt;script&gt;
-  // Widget floats at top-right corner
-  FontSwitcher.init({
-    targetClasses: ['newa-content']
-  });
-&lt;/script&gt;
-    </div>
-
-    <h3>Example: Inside a navigation bar</h3>
-    <div class="code-block">
-&lt;nav id="main-nav" style="background: #2c3e50;"&gt;
-  &lt;h2&gt;My Site&lt;/h2&gt;
-&lt;/nav&gt;
-
-&lt;div class="newa-content"&gt;
-  &lt;p&gt;नेपालभाषा content here...&lt;/p&gt;
-&lt;/div&gt;
-
+&lt;!-- Initialize FontSwitcher --&gt;
 &lt;script src="js/font-switcher.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   FontSwitcher.init({
@@ -173,49 +606,197 @@
     backgroundColor: '#2c3e50',
     targetClasses: ['newa-content']
   });
-&lt;/script&gt;
+&lt;/script&gt;</div>
+      </div>
     </div>
 
-    <h3>Example: Multiple target classes</h3>
-    <div class="code-block">
-&lt;script&gt;
-  FontSwitcher.init({
-    targetClasses: ['newa-content', 'article', 'main-text']
-  });
-&lt;/script&gt;
+    <!-- COMPARISON MODE CONTAINER -->
+    <div id="comparison-view-container" class="comparison-grid-view" style="display:none;">
+      <!-- Original Devanagari -->
+      <div class="comparison-card">
+        <div class="comparison-card-title">1. Original Devanagari</div>
+        <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
+        <p>विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट सार्वजनिक यानादीगु खः ।</p>
+      </div>
+
+      <!-- Nithya Ranjana -->
+      <div class="comparison-card">
+        <div class="comparison-card-title">2. Nithya Ranjana</div>
+        <div class="font-switcher-ranjana" style="font-size:1.6rem;">
+          <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
+          <p>विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट सार्वजनिक यानादीगु खः ।</p>
+        </div>
+      </div>
+
+      <!-- Nepal Aakha -->
+      <div class="comparison-card">
+        <div class="comparison-card-title">3. Nepal Lipi "Aakha"</div>
+        <div class="font-switcher-newa">
+          <h2>अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक</h2>
+          <p>विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट सार्वजनिक यानादीगु खः ।</p>
+        </div>
+      </div>
+
+      <!-- Noto Sans Newa -->
+      <div class="comparison-card">
+        <div class="comparison-card-title">4. Noto Sans Newa</div>
+        <div class="font-switcher-notoNewa" id="notonewa-converted-demo">
+        </div>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <div class="content">
-    <h2 class = "newa-content">न्हूम्ह कुमारी आर्यतारा शाक्य</h2>
-    <p class = "newa-content">येँ (नेपालभाषा टाइम्स) - येँया न्हूम्ह लाय्कू कुमारी कथं मय्जु आर्यतारा शाक्ययात ल्यःगु दु । कुमारी ल्ययेगु परम्परागत पद्धति कथं वय्कःयात न्हूम्ह कुमारी कथं ल्ययेगु ज्या जूगु खः । वय्कः येँया इतुम्बहाः अर्थात भाष्करदेव संस्कारित केशचन्द्रकृत पारावर्त महाविहारया शाक्य कुलपुत्री खः । वय्कःया उमेर थौंकन्हय् निदँत्या स्वयां भचा अप्वः थ्यनाच्वंगु दु ।</p>
-    <p class = "newa-content">वय्कः उगु विहारया भाजु अनन्त शाक्य व मय्जु प्रतिष्ठा शाक्यया म्ह्याय्मय्जु खः । वय्कःया बाज्या अमृतरत्न शाक्य खःसा अजि शिलु शाक्य खः । वय्कःया बाज्या अमृतरत्न शाक्य नेपालभाषाया नांजाःम्ह म्ये च्वमि खः ।</p>
-    <p class = "newa-content">आः थ्वहे वइगु अष्टमि मंगलवाः कुन्हु न्हिनसिया १२ः०५ निसें १२ः१६ बजे तकया साइत दुने वय्कःयात कुमारी छेँय् छगू विशेष अनुष्ठान यासें न्हूम्ह कुमारीया आसनय् बिराजमान याकीगु ग्वसाः दु । नवमि कुन्हु हनुमानध्वाखाया तलेजुइ यंकाः विशेष पुजा जुइ । दशमि कुन्हु वसपोलं मोहनिया सिन्हः तिकाबिज्याइ ।</p>
-    <p class = "newa-content">थुगुसी न्हूम्ह कुमारी ल्ययेगु ज्याया भाला शाक्य महाविहार संघपाखें याःगु खः । न्हूम्ह कुमारी ल्ययेया लागिं संघं कुमारी जुइ जुइपिं येँया झिंखुगू बहालय् पौ छ्वयाः नां मुंकेगु ज्या याःगु खः ।</p>
-    <p class = "newa-content">संघया महासचिव संघरत्न शाक्यं ‘नेपालभाषा टाइम्स’ यात कनादीकथं कुमारी जुइगु लागिं आपालं निवेदन वःगु खःसां संघं दयेकातःगु मापदण्ड दुने लाःपिं स्वम्हेसित जक अन्तिम छनौटय् दुथ्याकूगु खः । थ्व स्वम्ह मध्ये आर्यतारायात न्हूम्ह कुमारी ल्ययेगु ज्या जूगु खः । थुकी गुथि संस्थान, पञ्चाङ निर्णायक समितिं नं भूमिका म्हितूगु खःसा आः छनौट जूम्ह शाक्यपुत्रीयात राष्ट्रप्रमुखयाथाय् नं यंकाः नापलाकीगु ग्वसाः दु ।</p>
-    <p class = "newa-content">अष्टमि कुन्हु न्हूम्ह कुमारीयात आसनय् तयेगु ज्याया नापनापं निवृत्त जुइम्ह कुमारी माजुयात आसनं क्वकयाः बाजागाजा सहित छेँय् तः वनेगु ज्या नं जुइ । थौंकन्हय् मय्जु तृष्णा शाक्य कुमारीया आसनय् दी । वसपोलया छेँ ओमबहालय् खःसां कुमारी छेँनं विदाइ यानाः नःघःया पाजुपिनि छेँय् यंकेगु तयारी जुयाच्वंगु खँ धाःगु दु । निवृत्त जुइम्ह कुमारीयात कुमारी छेँया दबूपाखे स्वःगु चिद्वाःगु लुखां पित यंकीगु चलन दु । वसपोल वंगु च्यादँ न्ह्यः कुमारीया आसनय् विराजमान जुयाबिज्याःगु खः ।</p>
-    <p>This is regular paragraph text. When you switch fonts using the widget, widgets with class specified in the <code>FontSwitcher.init()</code> will change according to your selection.</p>
-    <p>The font selection is saved to your browser's localStorage, so your preference will persist across page reloads.</p>
-  </div>
+  <!-- CALLIJATRA FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="images/callijatra_logo.svg" alt="Callijatra Foundation Logo">
+        <p>Promoting indigenous scripts through technology, education, and design.</p>
+      </div>
 
-  <!-- Include the font switcher JavaScript -->
+      <div>
+        <h3 class="footer-social-title">Connect</h3>
+        <div class="social-grid">
+          <a href="https://www.instagram.com/callijatra" target="_blank" rel="noopener noreferrer" class="social-item instagram">
+            <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></span>
+            Instagram
+          </a>
+          <a href="https://www.facebook.com/ranjana-script" target="_blank" rel="noopener noreferrer" class="social-item facebook">
+            <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></span>
+            Facebook
+          </a>
+          <a href="https://www.youtube.com/@callijatra" target="_blank" rel="noopener noreferrer" class="social-item youtube">
+            <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>
+            YouTube
+          </a>
+          <a href="https://github.com/callijatra" target="_blank" rel="noopener noreferrer" class="social-item github">
+            <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.82 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+            GitHub
+          </a>
+          <a href="mailto:callijatrafoundation@gmail.com" class="social-item mail">
+            <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+            Mail
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Callijatra Foundation. All rights reserved.</p>
+      <p>Preserving Nepal's Indigenous Scripts & Calligraphy</p>
+    </div>
+  </footer>
+
   <script src="js/font-switcher.js"></script>
-  
-  <!-- Initialize the widget -->
   <script>
-    // Example: Place widget in navigation bar with matching background
-    // Insert into the nav-links ul so it appears with other nav items
-    FontSwitcher.init({
-      container: '#main-nav',  // Insert into navigation links list
-      backgroundColor: '#2c3e50',  // Match navigation background (auto-adjusts text to white)
-      targetClasses: ['newa-content']  // Apply fonts to elements with 'content' class
+    document.addEventListener('DOMContentLoaded', function() {
+      // Dark Mode Toggle
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const iconSun = document.getElementById('icon-sun');
+      const iconMoon = document.getElementById('icon-moon');
+
+      function updateThemeIcons() {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          iconSun.classList.remove('hidden');
+          iconMoon.classList.add('hidden');
+        } else {
+          iconSun.classList.add('hidden');
+          iconMoon.classList.remove('hidden');
+        }
+      }
+      updateThemeIcons();
+
+      themeToggleBtn.addEventListener('click', function() {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeIcons();
+      });
+
+      // Mobile Hamburger Drawer Toggle
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconHamburger = document.getElementById('icon-hamburger');
+      const iconClose = document.getElementById('icon-close');
+
+      hamburgerBtn.addEventListener('click', function() {
+        const isOpen = mobileMenu.classList.contains('open');
+        if (isOpen) {
+          mobileMenu.classList.remove('open');
+          iconHamburger.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+          hamburgerBtn.setAttribute('aria-expanded', 'false');
+        } else {
+          mobileMenu.classList.add('open');
+          iconHamburger.classList.add('hidden');
+          iconClose.classList.remove('hidden');
+          hamburgerBtn.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          iconHamburger.classList.remove('hidden');
+          iconClose.classList.add('hidden');
+          hamburgerBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // Initialize FontSwitcher inside the custom nav bar
+      FontSwitcher.init({
+        container: '#main-nav',
+        backgroundColor: '#2c3e50',
+        targetClasses: ['newa-content']
+      });
+
+      // Programmatic Quick Buttons
+      const btnDeva = document.getElementById('btn-font-deva');
+      const btnRanj = document.getElementById('btn-font-ranj');
+      const btnAakha = document.getElementById('btn-font-aakha');
+      const btnNoto = document.getElementById('btn-font-noto');
+
+      function setActiveFontBtn(activeBtn) {
+        [btnDeva, btnRanj, btnAakha, btnNoto].forEach(b => b.classList.remove('active'));
+        activeBtn.classList.add('active');
+      }
+
+      btnDeva.addEventListener('click', () => { FontSwitcher.switchFont('devanagari'); setActiveFontBtn(btnDeva); });
+      btnRanj.addEventListener('click', () => { FontSwitcher.switchFont('ranjana'); setActiveFontBtn(btnRanj); });
+      btnAakha.addEventListener('click', () => { FontSwitcher.switchFont('newa'); setActiveFontBtn(btnAakha); });
+      btnNoto.addEventListener('click', () => { FontSwitcher.switchFont('notoNewa'); setActiveFontBtn(btnNoto); });
+
+      window.addEventListener('fontChange', function(e) {
+        if (e.detail.font === 'devanagari') setActiveFontBtn(btnDeva);
+        if (e.detail.font === 'ranjana') setActiveFontBtn(btnRanj);
+        if (e.detail.font === 'newa') setActiveFontBtn(btnAakha);
+        if (e.detail.font === 'notoNewa') setActiveFontBtn(btnNoto);
+      });
+
+      // View Mode Toggle
+      const btnModeArticle = document.getElementById('btn-mode-article');
+      const btnModeCompare = document.getElementById('btn-mode-compare');
+      const articleViewContainer = document.getElementById('article-view-container');
+      const comparisonViewContainer = document.getElementById('comparison-view-container');
+      const notonewaConvertedDemo = document.getElementById('notonewa-converted-demo');
+
+      notonewaConvertedDemo.innerHTML = `<h2>${FontSwitcher.toNewa('अःपुगु ‘नित्या रञ्जना’ लिपिया युनिकोड फन्ट सार्वजनिक')}</h2><p>${FontSwitcher.toNewa('विश्वया हे सुन्दर लिपि कथं नांजाःगु रञ्जना लिपिया न्हूगु युनिकोड फन्ट सार्वजनिक जूगु दु । क्यालिजात्रा फाउन्डेसनपाखें तयार याःगु थ्व ‘नित्या रञ्जना’ नांगु थ्व न्हूगु फन्ट सार्वजनिक यानादीगु खः ।')}</p>`;
+
+      btnModeArticle.addEventListener('click', () => {
+        btnModeArticle.classList.add('active');
+        btnModeCompare.classList.remove('active');
+        articleViewContainer.style.display = 'block';
+        comparisonViewContainer.style.display = 'none';
+      });
+
+      btnModeCompare.addEventListener('click', () => {
+        btnModeCompare.classList.add('active');
+        btnModeArticle.classList.remove('active');
+        articleViewContainer.style.display = 'none';
+        comparisonViewContainer.style.display = 'grid';
+      });
     });
-    
-    // Alternative: Default fixed position (top-right corner)
-    // FontSwitcher.init({
-    //   targetClasses: ['content']
-    // });
   </script>
 </body>
 </html>
-
