@@ -28,6 +28,12 @@
       display: none !important;
     }
 
+    /* CSS Dark/Light Mode Icon Toggle */
+    html.dark #icon-sun { display: block !important; }
+    html.dark #icon-moon { display: none !important; }
+    html:not(.dark) #icon-sun { display: none !important; }
+    html:not(.dark) #icon-moon { display: block !important; }
+
     /* Base CSS Variables & Theme Setup matching Callijatra Foundation */
     :root {
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -633,32 +639,45 @@
       background-color: #111827;
       border-radius: 0.75rem;
       border: 1px solid #1f2937;
-      padding: 1.25rem 1.25rem 2.75rem 1.25rem;
+      padding: 1.25rem 1.25rem 3.25rem 1.25rem;
       position: relative;
       color: #f9fafb;
       font-family: var(--font-mono);
       font-size: 0.85rem;
       line-height: 1.65;
       overflow-x: auto;
-      white-space: pre;
+      min-height: 140px;
+    }
+    .code-box pre {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
     .copy-btn {
       position: absolute;
       bottom: 0.75rem;
       right: 0.75rem;
-      padding: 0.4rem 0.8rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 0.4rem;
       background-color: #374151;
       color: #ffffff;
       font-size: 0.75rem;
       font-weight: 600;
-      border: none;
+      border: 1px solid #4b5563;
       cursor: pointer;
-      transition: background-color 0.15s;
+      transition: background-color 0.15s, border-color 0.15s;
+      z-index: 10;
     }
     .copy-btn:hover {
       background-color: var(--brand);
+      border-color: var(--brand-hover);
     }
 
     /* Documentation Table */
@@ -1158,8 +1177,8 @@
         </div>
       </div>
 
-      <div style="position:relative;">
-        <div class="code-box" id="code-snippet-output"></div>
+      <div class="code-box">
+        <pre id="code-snippet-output"></pre>
         <button class="copy-btn" id="btn-copy-code">Copy Code</button>
       </div>
     </div>
