@@ -633,7 +633,7 @@
       background-color: #111827;
       border-radius: 0.75rem;
       border: 1px solid #1f2937;
-      padding: 1.25rem;
+      padding: 1.25rem 1.25rem 2.75rem 1.25rem;
       position: relative;
       color: #f9fafb;
       font-family: var(--font-mono);
@@ -644,7 +644,7 @@
 
     .copy-btn {
       position: absolute;
-      top: 0.75rem;
+      bottom: 0.75rem;
       right: 0.75rem;
       padding: 0.4rem 0.8rem;
       border-radius: 0.4rem;
@@ -1075,26 +1075,53 @@
         </div>
 
         <div class="form-group">
-          <label>Border Configuration</label>
+          <label>Outer Container Border</label>
           <div style="display:flex;flex-direction:column;gap:0.6rem;">
             <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;cursor:pointer;">
-              <input type="checkbox" id="cfg-show-border" checked>
-              <span>Show border around widget</span>
+              <input type="checkbox" id="cfg-show-container-border" checked>
+              <span>Show outer border around widget container</span>
             </label>
             
-            <div id="border-colors-group" style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div id="container-border-colors-group" style="display:flex;flex-direction:column;gap:0.5rem;">
               <div>
-                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Light Mode Border Color:</span>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Light Mode Container Border:</span>
                 <div class="color-picker-wrapper">
-                  <input type="color" id="cfg-border-picker" class="color-picker-swatch" value="#e5e7eb">
-                  <input type="text" id="cfg-border" class="form-control" style="flex:1;" value="#e5e7eb" placeholder="#e5e7eb, transparent">
+                  <input type="color" id="cfg-container-border-picker" class="color-picker-swatch" value="#e5e7eb">
+                  <input type="text" id="cfg-container-border" class="form-control" style="flex:1;" value="#e5e7eb" placeholder="#e5e7eb, transparent">
                 </div>
               </div>
               <div>
-                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Dark Mode Border Color:</span>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Dark Mode Container Border:</span>
                 <div class="color-picker-wrapper">
-                  <input type="color" id="cfg-dark-border-picker" class="color-picker-swatch" value="#1f2937">
-                  <input type="text" id="cfg-dark-border" class="form-control" style="flex:1;" value="#1f2937" placeholder="#1f2937, transparent">
+                  <input type="color" id="cfg-dark-container-border-picker" class="color-picker-swatch" value="#1f2937">
+                  <input type="text" id="cfg-dark-container-border" class="form-control" style="flex:1;" value="#1f2937" placeholder="#1f2937, transparent">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Select Field Border</label>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;">
+            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" id="cfg-show-select-border" checked>
+              <span>Show border around select dropdown field</span>
+            </label>
+            
+            <div id="select-border-colors-group" style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Light Mode Select Border:</span>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="cfg-select-border-picker" class="color-picker-swatch" value="#e5e7eb">
+                  <input type="text" id="cfg-select-border" class="form-control" style="flex:1;" value="#e5e7eb" placeholder="#e5e7eb, transparent">
+                </div>
+              </div>
+              <div>
+                <span style="font-size:0.8rem;color:var(--text-subtle);display:block;margin-bottom:0.2rem;">Dark Mode Select Border:</span>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="cfg-dark-select-border-picker" class="color-picker-swatch" value="#1f2937">
+                  <input type="text" id="cfg-dark-select-border" class="form-control" style="flex:1;" value="#1f2937" placeholder="#1f2937, transparent">
                 </div>
               </div>
             </div>
@@ -1187,22 +1214,64 @@
             <td>Text label shown before dropdown. Set to <code>''</code> or <code>false</code> to hide label and show dropdown only.</td>
           </tr>
           <tr>
+            <td><code>dropDirection</code></td>
+            <td>String</td>
+            <td><code>'auto'</code></td>
+            <td>Dropdown open direction (<code>'auto'</code>, <code>'up'</code>, or <code>'down'</code>). Automatically set to <code>'up'</code> when <code>position: 'bottom-right'</code>.</td>
+          </tr>
+          <tr>
+            <td><code>showContainerBorder</code></td>
+            <td>Boolean</td>
+            <td><code>true</code></td>
+            <td>Set to <code>false</code> to remove the outer container border.</td>
+          </tr>
+          <tr>
+            <td><code>containerBorderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom container border color for light mode.</td>
+          </tr>
+          <tr>
+            <td><code>darkContainerBorderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom container border color for dark mode (when <code>.dark</code> is active).</td>
+          </tr>
+          <tr>
+            <td><code>showSelectBorder</code></td>
+            <td>Boolean</td>
+            <td><code>true</code></td>
+            <td>Set to <code>false</code> to remove the select field border.</td>
+          </tr>
+          <tr>
+            <td><code>selectBorderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom select field border color for light mode.</td>
+          </tr>
+          <tr>
+            <td><code>darkSelectBorderColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom select field border color for dark mode (when <code>.dark</code> is active).</td>
+          </tr>
+          <tr>
             <td><code>showBorder</code></td>
             <td>Boolean</td>
             <td><code>true</code></td>
-            <td>Set to <code>false</code> to remove the border around the widget and dropdown.</td>
+            <td>Legacy option: controls both container and select borders simultaneously if specific border options are omitted.</td>
           </tr>
           <tr>
             <td><code>borderColor</code></td>
             <td>String</td>
             <td><code>null</code></td>
-            <td>Custom border color hex/rgb for light mode.</td>
+            <td>Legacy option: custom border color for both container and select field in light mode.</td>
           </tr>
           <tr>
             <td><code>darkBorderColor</code></td>
             <td>String</td>
             <td><code>null</code></td>
-            <td>Custom border color hex/rgb when dark mode (<code>.dark</code>) is active.</td>
+            <td>Legacy option: custom border color for both container and select field in dark mode.</td>
           </tr>
           <tr>
             <td><code>backgroundColor</code></td>
@@ -1397,12 +1466,21 @@
       const cfgContainerId = document.getElementById('cfg-container-id');
       const cfgLabelText = document.getElementById('cfg-label-text');
       const cfgShowLabel = document.getElementById('cfg-show-label');
-      const cfgShowBorder = document.getElementById('cfg-show-border');
-      const borderColorsGroup = document.getElementById('border-colors-group');
-      const cfgBorder = document.getElementById('cfg-border');
-      const cfgBorderPicker = document.getElementById('cfg-border-picker');
-      const cfgDarkBorder = document.getElementById('cfg-dark-border');
-      const cfgDarkBorderPicker = document.getElementById('cfg-dark-border-picker');
+
+      const cfgShowContainerBorder = document.getElementById('cfg-show-container-border');
+      const containerBorderColorsGroup = document.getElementById('container-border-colors-group');
+      const cfgContainerBorder = document.getElementById('cfg-container-border');
+      const cfgContainerBorderPicker = document.getElementById('cfg-container-border-picker');
+      const cfgDarkContainerBorder = document.getElementById('cfg-dark-container-border');
+      const cfgDarkContainerBorderPicker = document.getElementById('cfg-dark-container-border-picker');
+
+      const cfgShowSelectBorder = document.getElementById('cfg-show-select-border');
+      const selectBorderColorsGroup = document.getElementById('select-border-colors-group');
+      const cfgSelectBorder = document.getElementById('cfg-select-border');
+      const cfgSelectBorderPicker = document.getElementById('cfg-select-border-picker');
+      const cfgDarkSelectBorder = document.getElementById('cfg-dark-select-border');
+      const cfgDarkSelectBorderPicker = document.getElementById('cfg-dark-select-border-picker');
+
       const cfgBg = document.getElementById('cfg-bg');
       const cfgBgPicker = document.getElementById('cfg-bg-picker');
       const cfgDarkBg = document.getElementById('cfg-dark-bg');
@@ -1415,8 +1493,10 @@
       function syncColorPickers() {
         if (/^#[0-9A-F]{6}$/i.test(cfgBg.value)) cfgBgPicker.value = cfgBg.value;
         if (/^#[0-9A-F]{6}$/i.test(cfgDarkBg.value)) cfgDarkBgPicker.value = cfgDarkBg.value;
-        if (/^#[0-9A-F]{6}$/i.test(cfgBorder.value)) cfgBorderPicker.value = cfgBorder.value;
-        if (/^#[0-9A-F]{6}$/i.test(cfgDarkBorder.value)) cfgDarkBorderPicker.value = cfgDarkBorder.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgContainerBorder.value)) cfgContainerBorderPicker.value = cfgContainerBorder.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgDarkContainerBorder.value)) cfgDarkContainerBorderPicker.value = cfgDarkContainerBorder.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgSelectBorder.value)) cfgSelectBorderPicker.value = cfgSelectBorder.value;
+        if (/^#[0-9A-F]{6}$/i.test(cfgDarkSelectBorder.value)) cfgDarkSelectBorderPicker.value = cfgDarkSelectBorder.value;
       }
 
       cfgBgPicker.addEventListener('input', function() {
@@ -1437,26 +1517,49 @@
         updateWidgetAndSnippet();
       });
 
-      cfgBorderPicker.addEventListener('input', function() {
-        cfgBorder.value = cfgBorderPicker.value;
+      cfgContainerBorderPicker.addEventListener('input', function() {
+        cfgContainerBorder.value = cfgContainerBorderPicker.value;
         updateWidgetAndSnippet();
       });
-      cfgBorder.addEventListener('input', function() {
+      cfgContainerBorder.addEventListener('input', function() {
         syncColorPickers();
         updateWidgetAndSnippet();
       });
 
-      cfgDarkBorderPicker.addEventListener('input', function() {
-        cfgDarkBorder.value = cfgDarkBorderPicker.value;
+      cfgDarkContainerBorderPicker.addEventListener('input', function() {
+        cfgDarkContainerBorder.value = cfgDarkContainerBorderPicker.value;
         updateWidgetAndSnippet();
       });
-      cfgDarkBorder.addEventListener('input', function() {
+      cfgDarkContainerBorder.addEventListener('input', function() {
         syncColorPickers();
         updateWidgetAndSnippet();
       });
 
-      cfgShowBorder.addEventListener('change', function() {
-        borderColorsGroup.style.display = cfgShowBorder.checked ? 'flex' : 'none';
+      cfgSelectBorderPicker.addEventListener('input', function() {
+        cfgSelectBorder.value = cfgSelectBorderPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgSelectBorder.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgDarkSelectBorderPicker.addEventListener('input', function() {
+        cfgDarkSelectBorder.value = cfgDarkSelectBorderPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgDarkSelectBorder.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgShowContainerBorder.addEventListener('change', function() {
+        containerBorderColorsGroup.style.display = cfgShowContainerBorder.checked ? 'flex' : 'none';
+        updateWidgetAndSnippet();
+      });
+
+      cfgShowSelectBorder.addEventListener('change', function() {
+        selectBorderColorsGroup.style.display = cfgShowSelectBorder.checked ? 'flex' : 'none';
         updateWidgetAndSnippet();
       });
 
@@ -1480,9 +1583,15 @@
         const targetCls = cfgTarget.value.split(',').map(s => s.trim()).filter(Boolean);
         const bg = cfgBg.value.trim();
         const darkBg = cfgDarkBg.value.trim();
-        const border = cfgBorder.value.trim();
-        const darkBorder = cfgDarkBorder.value.trim();
-        const showBorder = cfgShowBorder.checked;
+
+        const showContainerBorder = cfgShowContainerBorder.checked;
+        const containerBorder = cfgContainerBorder.value.trim();
+        const darkContainerBorder = cfgDarkContainerBorder.value.trim();
+
+        const showSelectBorder = cfgShowSelectBorder.checked;
+        const selectBorder = cfgSelectBorder.value.trim();
+        const darkSelectBorder = cfgDarkSelectBorder.value.trim();
+
         const showLabel = cfgShowLabel.checked;
         const labelText = cfgLabelText.value;
         const autoload = cfgAutoload.checked;
@@ -1518,12 +1627,21 @@
         } else if (labelText !== 'Font:') {
           jsConfig += `  labelText: '${labelText}',\n`;
         }
-        if (!showBorder) {
-          jsConfig += `  showBorder: false,\n`;
+
+        if (!showContainerBorder) {
+          jsConfig += `  showContainerBorder: false,\n`;
         } else {
-          if (border && border !== '#e5e7eb') jsConfig += `  borderColor: '${border}',\n`;
-          if (darkBorder && darkBorder !== '#1f2937') jsConfig += `  darkBorderColor: '${darkBorder}',\n`;
+          if (containerBorder && containerBorder !== '#e5e7eb') jsConfig += `  containerBorderColor: '${containerBorder}',\n`;
+          if (darkContainerBorder && darkContainerBorder !== '#1f2937') jsConfig += `  darkContainerBorderColor: '${darkContainerBorder}',\n`;
         }
+
+        if (!showSelectBorder) {
+          jsConfig += `  showSelectBorder: false,\n`;
+        } else {
+          if (selectBorder && selectBorder !== '#e5e7eb') jsConfig += `  selectBorderColor: '${selectBorder}',\n`;
+          if (darkSelectBorder && darkSelectBorder !== '#1f2937') jsConfig += `  darkSelectBorderColor: '${darkSelectBorder}',\n`;
+        }
+
         if (bg) {
           jsConfig += `  backgroundColor: '${bg}',\n`;
         }
@@ -1550,12 +1668,17 @@
           container: containerOpt,
           position: positionOpt,
           labelText: showLabel ? labelText : '',
-          showBorder: showBorder,
+          showContainerBorder: showContainerBorder,
+          showSelectBorder: showSelectBorder,
           autoLoad: autoload
         };
-        if (showBorder) {
-          if (border) widgetOptions.borderColor = border;
-          if (darkBorder) widgetOptions.darkBorderColor = darkBorder;
+        if (showContainerBorder) {
+          if (containerBorder) widgetOptions.containerBorderColor = containerBorder;
+          if (darkContainerBorder) widgetOptions.darkContainerBorderColor = darkContainerBorder;
+        }
+        if (showSelectBorder) {
+          if (selectBorder) widgetOptions.selectBorderColor = selectBorder;
+          if (darkSelectBorder) widgetOptions.darkSelectBorderColor = darkSelectBorder;
         }
         if (bg) widgetOptions.backgroundColor = bg;
         if (darkBg) widgetOptions.darkBackgroundColor = darkBg;

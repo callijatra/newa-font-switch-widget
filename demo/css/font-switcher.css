@@ -149,13 +149,31 @@
   padding: 4px 0;
 }
 
+/* Upward Dropdown for Bottom Placement */
+.font-switcher-fixed-bottom .font-switcher-options,
+.font-switcher-drop-up .font-switcher-options {
+  top: auto;
+  bottom: calc(100% + 6px);
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.2), 0 -8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
 .font-switcher-open .font-switcher-options {
   display: block;
   animation: fontSwitcherFadeIn 0.15s ease-out;
 }
 
+.font-switcher-fixed-bottom.font-switcher-open .font-switcher-options,
+.font-switcher-drop-up.font-switcher-open .font-switcher-options {
+  animation: fontSwitcherFadeUp 0.15s ease-out;
+}
+
 @keyframes fontSwitcherFadeIn {
   from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fontSwitcherFadeUp {
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -190,13 +208,42 @@
 
 .font-switcher-option-preview {
   font-size: 16px;
-  color: #4b5563;
+  color: inherit;
+  opacity: 0.8;
   white-space: nowrap;
 }
 
 .font-switcher-option:hover .font-switcher-option-preview,
 .font-switcher-option-active .font-switcher-option-preview {
   color: #c0392b;
+  opacity: 1;
+}
+
+/* Dark Theme Dropdown Options */
+html.dark .font-switcher-options {
+  background: #111827;
+  border-color: #1f2937;
+  color: #f9fafb;
+}
+
+html.dark .font-switcher-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f87171;
+}
+
+html.dark .font-switcher-option-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f87171;
+  border-left: 3px solid #ef4444;
+}
+
+html.dark .font-switcher-option-preview {
+  color: #9ca3af;
+}
+
+html.dark .font-switcher-option:hover .font-switcher-option-preview,
+html.dark .font-switcher-option-active .font-switcher-option-preview {
+  color: #f87171;
 }
 
 /* Font utility classes */

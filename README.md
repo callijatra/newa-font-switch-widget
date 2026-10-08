@@ -71,6 +71,14 @@ FontSwitcher.init({
 | `targetSelector` | `String` | `'body'` | CSS selector for target elements when `targetClasses` is omitted. |
 | `container` | `String \| HTMLElement` | `null` | Container to place widget into. If `null`, floats fixed on screen. |
 | `position` | `String` | `'top-right'` | Floating position when `container` is omitted (`'top-right'` or `'bottom-right'`). |
+| `dropDirection` | `String` | `'auto'` | Direction dropdown opens (`'auto'`, `'up'`, or `'down'`). Auto-flips up when `position: 'bottom-right'`. |
+| `labelText` | `String \| Boolean` | `'Font:'` | Text label shown before dropdown (`''` or `false` hides label). |
+| `showContainerBorder` | `Boolean` | `true` | Show/hide outer container border. |
+| `containerBorderColor` | `String` | `null` | Custom outer container border color for light mode. |
+| `darkContainerBorderColor` | `String` | `null` | Custom outer container border color for dark mode. |
+| `showSelectBorder` | `Boolean` | `true` | Show/hide select dropdown field border. |
+| `selectBorderColor` | `String` | `null` | Custom select field border color for light mode. |
+| `darkSelectBorderColor` | `String` | `null` | Custom select field border color for dark mode. |
 | `backgroundColor` | `String` | `null` | Custom background color (hex, rgb, transparent) for light mode. Auto-adjusts text contrast. |
 | `darkBackgroundColor` | `String` | `null` | Custom background color (hex, rgb) applied when dark mode (`.dark`) is active. |
 | `autoLoad` | `Boolean` | `true` | Automatically loads Google Fonts stylesheet for Noto Sans Newa when selected. |

@@ -140,12 +140,20 @@
       targetClasses: null,
       container: null,
       labelText: 'Font:',
+      showContainerBorder: true,
+      containerBorderColor: null,
+      darkContainerBorderColor: null,
+      showSelectBorder: true,
+      selectBorderColor: null,
+      darkSelectBorderColor: null,
+      // Backward compatibility options
       showBorder: true,
       borderColor: null,
       darkBorderColor: null,
       backgroundColor: null,
       darkBackgroundColor: null,
       position: 'top-right',
+      dropDirection: 'auto',
       autoLoad: true,
       storageKey: 'font-switcher-selection'
     },
@@ -295,6 +303,10 @@
         }
       }
 
+      if (this.config.dropDirection === 'up' || this.config.position === 'bottom-right') {
+        container.classList.add('font-switcher-drop-up');
+      }
+
       // Label text customization or removal
       let label = null;
       const labelText = (this.config.labelText !== undefined && this.config.labelText !== null) 
@@ -423,32 +435,66 @@
       const container = this.widgetElement;
       const label = container.querySelector('.font-switcher-label');
       const selected = container.querySelector('.font-switcher-selected');
+      const optionsList = container.querySelector('.font-switcher-options');
       const isDarkTheme = document.documentElement.classList.contains('dark');
 
-      // 1. Handle Borders
-      let effectiveBorder = null;
-      if (this.config.showBorder === false) {
-        effectiveBorder = 'transparent';
+      // 1. Container Border
+      let containerBorder = null;
+      if (this.config.showContainerBorder === false) {
+        containerBorder = 'transparent';
+      } else if (isDarkTheme && this.config.darkContainerBorderColor) {
+        containerBorder = this.config.darkContainerBorderColor;
+      } else if (this.config.containerBorderColor) {
+        containerBorder = this.config.containerBorderColor;
+      } else if (this.config.showBorder === false) {
+        containerBorder = 'transparent';
       } else if (isDarkTheme && this.config.darkBorderColor) {
-        effectiveBorder = this.config.darkBorderColor;
+        containerBorder = this.config.darkBorderColor;
       } else if (this.config.borderColor) {
-        effectiveBorder = this.config.borderColor;
+        containerBorder = this.config.borderColor;
       }
 
-      if (effectiveBorder) {
-        if (effectiveBorder === 'transparent' || effectiveBorder === 'none') {
+      if (containerBorder) {
+        if (containerBorder === 'transparent' || containerBorder === 'none') {
           container.style.border = 'none';
-          if (selected) selected.style.border = 'none';
         } else {
-          container.style.border = '1px solid ' + effectiveBorder;
-          if (selected) selected.style.borderColor = effectiveBorder;
+          container.style.border = '1px solid ' + containerBorder;
         }
       } else {
         container.style.border = '';
-        if (selected) selected.style.borderColor = '';
       }
 
-      // 2. Handle Backgrounds & Contrast
+      // 2. Select Field Border & Options List Border
+      let selectBorder = null;
+      if (this.config.showSelectBorder === false) {
+        selectBorder = 'transparent';
+      } else if (isDarkTheme && this.config.darkSelectBorderColor) {
+        selectBorder = this.config.darkSelectBorderColor;
+      } else if (this.config.selectBorderColor) {
+        selectBorder = this.config.selectBorderColor;
+      } else if (this.config.showBorder === false) {
+        selectBorder = 'transparent';
+      } else if (isDarkTheme && this.config.darkBorderColor) {
+        selectBorder = this.config.darkBorderColor;
+      } else if (this.config.borderColor) {
+        selectBorder = this.config.borderColor;
+      }
+
+      if (selectBorder) {
+        if (selectBorder === 'transparent' || selectBorder === 'none') {
+          if (selected) selected.style.border = 'none';
+        } else {
+          if (selected) selected.style.borderColor = selectBorder;
+        }
+        if (optionsList && selectBorder !== 'transparent' && selectBorder !== 'none') {
+          optionsList.style.borderColor = selectBorder;
+        }
+      } else {
+        if (selected) selected.style.borderColor = '';
+        if (optionsList) optionsList.style.borderColor = '';
+      }
+
+      // 3. Handle Backgrounds, Options Menu & Contrast
       let effectiveBg = null;
       if (isDarkTheme && this.config.darkBackgroundColor) {
         effectiveBg = this.config.darkBackgroundColor;
@@ -459,6 +505,10 @@
       if (effectiveBg) {
         container.style.backgroundColor = effectiveBg;
         const isDark = this.isDarkColor(effectiveBg);
+        if (optionsList) {
+          optionsList.style.backgroundColor = effectiveBg;
+          optionsList.style.color = isDark ? '#ffffff' : '#1f2937';
+        }
         if (isDark) {
           container.style.color = '#ffffff';
           if (label) label.style.color = '#ffffff';
@@ -481,6 +531,10 @@
         if (selected) {
           selected.style.backgroundColor = '';
           selected.style.color = '';
+        }
+        if (optionsList) {
+          optionsList.style.backgroundColor = '';
+          optionsList.style.color = '';
         }
       }
     },
