@@ -96,8 +96,22 @@
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      text-decoration: none;
       color: var(--text-main);
+    }
+    .brand-logo-img-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .brand-logo-img-link:hover {
+      opacity: 0.85;
+    }
+    .brand-title-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
     }
     .brand-logo img {
       height: 2.25rem;
@@ -623,10 +637,14 @@
   <!-- STICKY NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="brand-logo">
-        <img src="images/callijatra_logo.svg" alt="Callijatra Foundation Logo">
-        <span class="brand-badge">Keyboard</span>
-      </a>
+      <div class="brand-logo">
+        <a href="https://callijatra.github.io" target="_blank" rel="noopener noreferrer" title="Callijatra Foundation Webpage" class="brand-logo-img-link">
+          <img src="images/callijatra_logo.svg" alt="Callijatra Foundation Logo">
+        </a>
+        <a href="../index.html" class="brand-title-link" title="Font Switcher Home">
+          <span class="brand-badge">Keyboard</span>
+        </a>
+      </div>
 
       <!-- Desktop links -->
       <ul class="nav-links-desktop">
