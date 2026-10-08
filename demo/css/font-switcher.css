@@ -53,6 +53,15 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* Fixed positioning - bottom-right corner */
+.font-switcher-fixed-bottom {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+}
+
 /* Inline placement (when inserted into a custom container) */
 .font-switcher-inline {
   position: relative;

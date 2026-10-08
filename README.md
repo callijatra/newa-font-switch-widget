@@ -69,8 +69,10 @@ FontSwitcher.init({
 | :--- | :--- | :--- | :--- |
 | `targetClasses` | `Array` | `null` | Array of class names (without leading dot). Takes precedence over `targetSelector`. |
 | `targetSelector` | `String` | `'body'` | CSS selector for target elements when `targetClasses` is omitted. |
-| `container` | `String \| HTMLElement` | `null` | Container to place widget into. If `null`, floats fixed in top-right. |
-| `backgroundColor` | `String` | `null` | Custom background color (hex, rgb, transparent). Auto-adjusts text color for dark backgrounds. |
+| `container` | `String \| HTMLElement` | `null` | Container to place widget into. If `null`, floats fixed on screen. |
+| `position` | `String` | `'top-right'` | Floating position when `container` is omitted (`'top-right'` or `'bottom-right'`). |
+| `backgroundColor` | `String` | `null` | Custom background color (hex, rgb, transparent) for light mode. Auto-adjusts text contrast. |
+| `darkBackgroundColor` | `String` | `null` | Custom background color (hex, rgb) applied when dark mode (`.dark`) is active. |
 | `autoLoad` | `Boolean` | `true` | Automatically loads Google Fonts stylesheet for Noto Sans Newa when selected. |
 | `storageKey` | `String` | `'font-switcher-selection'` | localStorage key for persisting user preference across pages. |
 

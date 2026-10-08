@@ -135,12 +135,13 @@
   })();
 
   const FontSwitcher = {
-    config: {
+    defaultConfig: {
       targetSelector: 'body',
       targetClasses: null,
       container: null,
       backgroundColor: null,
-      position: 'fixed',
+      darkBackgroundColor: null,
+      position: 'top-right',
       autoLoad: true,
       storageKey: 'font-switcher-selection'
     },
@@ -171,6 +172,7 @@
     currentFont: 'devanagari',
     widgetElement: null,
     googleFontsLoaded: false,
+    themeObserver: null,
     originalTextMap: new Map(), // stores original text for restoration
 
     /**
@@ -178,9 +180,11 @@
      * @param {Object} options - Configuration options
      */
     init: function(options) {
-      // Merge user options with defaults
-      if (options) {
-        Object.assign(this.config, options);
+      this.config = Object.assign({}, this.defaultConfig, options || {});
+
+      if (this.widgetElement && this.widgetElement.parentNode) {
+        this.widgetElement.parentNode.removeChild(this.widgetElement);
+        this.widgetElement = null;
       }
 
       // Wait for DOM to be ready
@@ -238,7 +242,7 @@
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
         return luminance < 0.5;
       }
-      const darkColors = ['black', 'navy', 'darkblue', 'mediumblue', 'blue', 'darkgreen', 'green', 'teal', 'darkcyan', 'deepskyblue', 'darkred', 'red', 'darkmagenta', 'magenta', 'maroon', 'purple', 'indigo', 'darkslategray', 'darkslategrey', 'darkgray', 'darkgrey', 'gray', 'grey', '#2c3e50'];
+      const darkColors = ['black', 'navy', 'darkblue', 'mediumblue', 'blue', 'darkgreen', 'green', 'teal', 'darkcyan', 'deepskyblue', 'darkred', 'red', 'darkmagenta', 'magenta', 'maroon', 'purple', 'indigo', 'darkslategray', 'darkslategrey', 'darkgray', 'darkgrey', 'gray', 'grey', '#2c3e50', '#0f172a', '#111827'];
       return darkColors.includes(color);
     },
 
@@ -280,7 +284,11 @@
       if (targetContainer) {
         container.classList.add('font-switcher-inline');
       } else {
-        container.classList.add('font-switcher-fixed');
+        if (this.config.position === 'bottom-right') {
+          container.classList.add('font-switcher-fixed-bottom');
+        } else {
+          container.classList.add('font-switcher-fixed');
+        }
       }
 
       const label = document.createElement('label');
@@ -387,18 +395,6 @@
       container.appendChild(label);
       container.appendChild(dropdown);
 
-      if (this.config.backgroundColor) {
-        container.style.backgroundColor = this.config.backgroundColor;
-        const isDark = this.isDarkColor(this.config.backgroundColor);
-        if (isDark) {
-          container.style.color = '#ffffff';
-          label.style.color = '#ffffff';
-          selected.style.backgroundColor = this.config.backgroundColor;
-          selected.style.color = '#ffffff';
-          selected.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-        }
-      }
-
       if (targetContainer) {
         targetContainer.appendChild(container);
       } else {
@@ -406,6 +402,67 @@
       }
 
       this.widgetElement = container;
+      this.updateWidgetThemeColors();
+      this.bindThemeObserver();
+    },
+
+    updateWidgetThemeColors: function() {
+      if (!this.widgetElement) return;
+      const container = this.widgetElement;
+      const label = container.querySelector('.font-switcher-label');
+      const selected = container.querySelector('.font-switcher-selected');
+      const isDarkTheme = document.documentElement.classList.contains('dark');
+
+      let effectiveBg = null;
+      if (isDarkTheme && this.config.darkBackgroundColor) {
+        effectiveBg = this.config.darkBackgroundColor;
+      } else if (this.config.backgroundColor) {
+        effectiveBg = this.config.backgroundColor;
+      }
+
+      if (effectiveBg) {
+        container.style.backgroundColor = effectiveBg;
+        const isDark = this.isDarkColor(effectiveBg);
+        if (isDark) {
+          container.style.color = '#ffffff';
+          if (label) label.style.color = '#ffffff';
+          if (selected) {
+            selected.style.backgroundColor = effectiveBg;
+            selected.style.color = '#ffffff';
+            selected.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+          }
+        } else {
+          container.style.color = '#1f2937';
+          if (label) label.style.color = '#1f2937';
+          if (selected) {
+            selected.style.backgroundColor = effectiveBg;
+            selected.style.color = '#1f2937';
+            selected.style.borderColor = 'rgba(0, 0, 0, 0.15)';
+          }
+        }
+      } else {
+        container.style.backgroundColor = '';
+        container.style.color = '';
+        if (label) label.style.color = '';
+        if (selected) {
+          selected.style.backgroundColor = '';
+          selected.style.color = '';
+          selected.style.borderColor = '';
+        }
+      }
+    },
+
+    bindThemeObserver: function() {
+      if (this.themeObserver) return;
+      const self = this;
+      this.themeObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.attributeName === 'class') {
+            self.updateWidgetThemeColors();
+          }
+        });
+      });
+      this.themeObserver.observe(document.documentElement, { attributes: true });
     },
 
     /**

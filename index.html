@@ -592,6 +592,29 @@
       border-color: var(--brand);
     }
 
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .color-picker-swatch {
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      background: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .color-picker-swatch::-webkit-color-swatch-wrapper {
+      padding: 0.15rem;
+    }
+    .color-picker-swatch::-webkit-color-swatch {
+      border: none;
+      border-radius: 0.35rem;
+    }
+
     .code-box {
       background-color: #111827;
       border-radius: 0.75rem;
@@ -888,6 +911,8 @@
     </div>
 
     <div class="sandbox-container">
+      <div id="playground-slot" style="margin-bottom: 1.25rem; display: flex; justify-content: center;"></div>
+
       <div class="input-group">
         <label for="sandbox-input">Type or paste text in Devanagari / Nepalbhasa:</label>
         <textarea id="sandbox-input" class="custom-textarea" placeholder="Type Nepalbhasa or Devanagari text here... e.g. नमस्ते, येँ, नेपाल">येँ महानगरपालिका व क्यालिजात्रा फाउन्डेसन - नित्या रञ्जना व नेपाल लिपि प्रवर्धन</textarea>
@@ -1009,26 +1034,40 @@
     <div class="generator-grid">
       <div class="config-form">
         <div class="form-group">
-          <label for="cfg-container">Placement Mode</label>
+          <label for="cfg-placement">Placement Mode</label>
           <select id="cfg-placement" class="form-control">
-            <option value="inline">Inside Container (e.g. #main-nav)</option>
-            <option value="fixed">Floating Fixed (Top-Right Corner)</option>
+            <option value="header" selected>Header Navbar (#navbar-widget-slot)</option>
+            <option value="playground">Sandbox Playground (#playground-slot)</option>
+            <option value="fixed-top">Floating Fixed (Top-Right Corner)</option>
+            <option value="fixed-bottom">Floating Fixed (Bottom-Right Corner)</option>
+            <option value="custom">Custom Container Selector...</option>
           </select>
+        </div>
+
+        <div class="form-group" id="cfg-container-group" style="display:none;">
+          <label for="cfg-container-id">Custom Container Selector</label>
+          <input type="text" id="cfg-container-id" class="form-control" value="#main-nav" placeholder="#my-custom-container">
+        </div>
+
+        <div class="form-group">
+          <label for="cfg-bg">Light Mode Background Color</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="cfg-bg-picker" class="color-picker-swatch" value="#ffffff">
+            <input type="text" id="cfg-bg" class="form-control" style="flex:1;" value="#ffffff" placeholder="#2c3e50, #ffffff, transparent">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cfg-dark-bg">Dark Mode Background Color</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="cfg-dark-bg-picker" class="color-picker-swatch" value="#0f172a">
+            <input type="text" id="cfg-dark-bg" class="form-control" style="flex:1;" value="#0f172a" placeholder="#0f172a, #111827">
+          </div>
         </div>
 
         <div class="form-group">
           <label for="cfg-target">Target CSS Classes (comma-separated)</label>
-          <input type="text" id="cfg-target" class="form-control" value="newa-content, article-body">
-        </div>
-
-        <div class="form-group">
-          <label for="cfg-container-id">Container Selector (for inline placement)</label>
-          <input type="text" id="cfg-container-id" class="form-control" value="#main-nav">
-        </div>
-
-        <div class="form-group">
-          <label for="cfg-bg">Background Color</label>
-          <input type="text" id="cfg-bg" class="form-control" value="#2c3e50" placeholder="#2c3e50, transparent, #ffffff">
+          <input type="text" id="cfg-target" class="form-control" value="newa-content">
         </div>
 
         <div class="form-group">
@@ -1081,13 +1120,25 @@
             <td><code>container</code></td>
             <td>String | HTMLElement</td>
             <td><code>null</code></td>
-            <td>CSS selector or DOM element where widget is inserted. If <code>null</code>, floats fixed in top-right.</td>
+            <td>CSS selector or DOM element where widget is inserted. If <code>null</code>, floats fixed on screen.</td>
+          </tr>
+          <tr>
+            <td><code>position</code></td>
+            <td>String</td>
+            <td><code>'top-right'</code></td>
+            <td>Floating position when <code>container</code> is not set. Options: <code>'top-right'</code> or <code>'bottom-right'</code>.</td>
           </tr>
           <tr>
             <td><code>backgroundColor</code></td>
             <td>String</td>
             <td><code>null</code></td>
-            <td>Custom background color hex/rgb/name. Auto-adjusts text color for dark backgrounds.</td>
+            <td>Custom background color hex/rgb for light mode. Auto-adjusts text color for dark backgrounds.</td>
+          </tr>
+          <tr>
+            <td><code>darkBackgroundColor</code></td>
+            <td>String</td>
+            <td><code>null</code></td>
+            <td>Custom background color hex/rgb when dark mode (<code>.dark</code>) is active on page.</td>
           </tr>
           <tr>
             <td><code>autoLoad</code></td>
@@ -1103,6 +1154,7 @@
           </tr>
         </tbody>
       </table>
+    </div>
     </div>
   </section>
 
@@ -1263,31 +1315,93 @@
       sandboxInput.addEventListener('input', updateSandboxPreviews);
       updateSandboxPreviews();
 
-      // 5. Interactive Code Snippet Generator Logic
+      // 5. Interactive Code Snippet Generator & Real-Time Configurator
       const cfgPlacement = document.getElementById('cfg-placement');
-      const cfgTarget = document.getElementById('cfg-target');
+      const cfgContainerGroup = document.getElementById('cfg-container-group');
       const cfgContainerId = document.getElementById('cfg-container-id');
       const cfgBg = document.getElementById('cfg-bg');
+      const cfgBgPicker = document.getElementById('cfg-bg-picker');
+      const cfgDarkBg = document.getElementById('cfg-dark-bg');
+      const cfgDarkBgPicker = document.getElementById('cfg-dark-bg-picker');
+      const cfgTarget = document.getElementById('cfg-target');
       const cfgAutoload = document.getElementById('cfg-autoload');
       const codeOutput = document.getElementById('code-snippet-output');
       const btnCopyCode = document.getElementById('btn-copy-code');
 
-      function generateCodeSnippet() {
+      function syncColorPickers() {
+        if (/^#[0-9A-F]{6}$/i.test(cfgBg.value)) {
+          cfgBgPicker.value = cfgBg.value;
+        }
+        if (/^#[0-9A-F]{6}$/i.test(cfgDarkBg.value)) {
+          cfgDarkBgPicker.value = cfgDarkBg.value;
+        }
+      }
+
+      cfgBgPicker.addEventListener('input', function() {
+        cfgBg.value = cfgBgPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgBg.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgDarkBgPicker.addEventListener('input', function() {
+        cfgDarkBg.value = cfgDarkBgPicker.value;
+        updateWidgetAndSnippet();
+      });
+      cfgDarkBg.addEventListener('input', function() {
+        syncColorPickers();
+        updateWidgetAndSnippet();
+      });
+
+      cfgPlacement.addEventListener('change', function() {
+        if (cfgPlacement.value === 'custom') {
+          cfgContainerGroup.style.display = 'block';
+        } else {
+          cfgContainerGroup.style.display = 'none';
+        }
+        updateWidgetAndSnippet();
+      });
+
+      function updateWidgetAndSnippet() {
         const placement = cfgPlacement.value;
         const targetCls = cfgTarget.value.split(',').map(s => s.trim()).filter(Boolean);
-        const containerId = cfgContainerId.value.trim();
         const bg = cfgBg.value.trim();
+        const darkBg = cfgDarkBg.value.trim();
         const autoload = cfgAutoload.checked;
+
+        let containerOpt = null;
+        let positionOpt = 'top-right';
+
+        if (placement === 'header') {
+          containerOpt = '#navbar-widget-slot';
+        } else if (placement === 'playground') {
+          containerOpt = '#playground-slot';
+        } else if (placement === 'custom') {
+          containerOpt = cfgContainerId.value.trim() || null;
+        } else if (placement === 'fixed-bottom') {
+          containerOpt = null;
+          positionOpt = 'bottom-right';
+        } else {
+          containerOpt = null;
+          positionOpt = 'top-right';
+        }
 
         let jsConfig = "FontSwitcher.init({\n";
         if (targetCls.length > 0) {
           jsConfig += `  targetClasses: [${targetCls.map(c => `'${c}'`).join(', ')}],\n`;
         }
-        if (placement === 'inline' && containerId) {
-          jsConfig += `  container: '${containerId}',\n`;
+        if (containerOpt) {
+          jsConfig += `  container: '${containerOpt}',\n`;
+        } else if (positionOpt !== 'top-right') {
+          jsConfig += `  position: '${positionOpt}',\n`;
         }
         if (bg) {
           jsConfig += `  backgroundColor: '${bg}',\n`;
+        }
+        if (darkBg) {
+          jsConfig += `  darkBackgroundColor: '${darkBg}',\n`;
         }
         if (!autoload) {
           jsConfig += `  autoLoad: false,\n`;
@@ -1302,14 +1416,25 @@
         htmlSnippet += `<script>\n${jsConfig}\n<\/script>`;
 
         codeOutput.textContent = htmlSnippet;
+
+        // Re-initialize live widget on the page dynamically
+        const widgetOptions = {
+          targetClasses: targetCls.length > 0 ? targetCls : ['newa-content'],
+          container: containerOpt,
+          position: positionOpt,
+          autoLoad: autoload
+        };
+        if (bg) widgetOptions.backgroundColor = bg;
+        if (darkBg) widgetOptions.darkBackgroundColor = darkBg;
+
+        FontSwitcher.init(widgetOptions);
       }
 
-      cfgPlacement.addEventListener('change', generateCodeSnippet);
-      cfgTarget.addEventListener('input', generateCodeSnippet);
-      cfgContainerId.addEventListener('input', generateCodeSnippet);
-      cfgBg.addEventListener('input', generateCodeSnippet);
-      cfgAutoload.addEventListener('change', generateCodeSnippet);
-      generateCodeSnippet();
+      cfgTarget.addEventListener('input', updateWidgetAndSnippet);
+      cfgContainerId.addEventListener('input', updateWidgetAndSnippet);
+      cfgAutoload.addEventListener('change', updateWidgetAndSnippet);
+
+      updateWidgetAndSnippet();
 
       btnCopyCode.addEventListener('click', function() {
         navigator.clipboard.writeText(codeOutput.textContent).then(function() {
