@@ -1718,7 +1718,7 @@
             return `<span style="color: #6b7280; font-style: italic;">${escaped}</span>`;
           }
 
-          // HTML Tag lines (<link ...>, <script ...>, </script>)
+          // HTML Tag lines (<link ...>, <script ...>, <\/script>)
           if (escaped.trim().startsWith('&lt;link') || escaped.trim().startsWith('&lt;script') || escaped.trim() === '&lt;/script&gt;') {
             return escaped
               .replace(/&lt;(\/?)([a-zA-Z0-9]+)/g, '&lt;$1<span style="color: #f43f5e; font-weight: 600;">$2</span>')
