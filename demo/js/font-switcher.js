@@ -507,7 +507,7 @@
         const isDark = this.isDarkColor(effectiveBg);
         if (optionsList) {
           optionsList.style.backgroundColor = effectiveBg;
-          optionsList.style.color = isDark ? '#ffffff' : '#1f2937';
+          optionsList.style.color = isDark ? '#ffffff' : '#111827';
         }
         if (isDark) {
           container.style.color = '#ffffff';
@@ -517,11 +517,11 @@
             selected.style.color = '#ffffff';
           }
         } else {
-          container.style.color = '#1f2937';
-          if (label) label.style.color = '#1f2937';
+          container.style.color = '#111827';
+          if (label) label.style.color = '#111827';
           if (selected) {
             selected.style.backgroundColor = effectiveBg;
-            selected.style.color = '#1f2937';
+            selected.style.color = '#111827';
           }
         }
       } else {
