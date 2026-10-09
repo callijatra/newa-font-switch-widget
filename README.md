@@ -2,6 +2,7 @@
 
 [![Callijatra Foundation](https://img.shields.io/badge/Callijatra-Foundation-c0392b.svg)](https://callijatra.github.io)
 [![License: Open Source](https://img.shields.io/badge/License-Open%20Source-blue.svg)](LICENSE)
+[![Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog-orange.svg)](CHANGELOG.md)
 [![Demo](https://img.shields.io/badge/Live-Demo-brightgreen.svg)](https://callijatra.github.io/newa-font-switch-widget/demo)
 
 A standalone, easy-to-distribute web font switcher widget developed by **[Callijatra Foundation](https://callijatra.github.io)**. It allows users to switch between **Original Devanagari**, **Nithya Ranjana**, **Nepal Lipi "Aakha"**, and **Noto Sans Newa** fonts on any webpage.
@@ -149,6 +150,12 @@ This project is maintained by **Callijatra Foundation**, dedicated to preserving
 - **YouTube**: [@callijatra](https://www.youtube.com/@callijatra)
 - **GitHub**: [github.com/callijatra](https://github.com/callijatra)
 - **Email**: [callijatrafoundation@gmail.com](mailto:callijatrafoundation@gmail.com)
+
+---
+
+## 📜 Changelog
+
+Detailed release notes and change history are maintained in **[CHANGELOG.md](CHANGELOG.md)**.
 
 ---
 
